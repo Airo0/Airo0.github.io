@@ -124,7 +124,7 @@
 				}else{
 					alert('您正在作为发送端, 请确认摄像头选择正确!\n选择错误的摄像头可能会导致隐私画面流出!\n\n点击 [确定] 并选择您要推流的是摄像头还是屏幕.\n请允许网站访问摄像头以进行串流, 推流时不要关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.');
 				}
-				window.open(document.getElementById('server').value)
+				location = document.getElementById('server').value;
 			}
 			function getSelectText(id) {
 				var obj = document.getElementById(id)
