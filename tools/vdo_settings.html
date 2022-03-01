@@ -13,12 +13,16 @@
 			background-color: #fff;
 			border-radius: 20px;
 			width: 400px;
+			height: 720px;
 			margin: auto;
 			position: absolute;
 			top: 0;
 			left: 0;
 			right: 0;
 			bottom: 0;
+			-moz-box-shadow:0 4px 10px rgba(0, 0, 0, 0.4); 
+			-webkit-box-shadow:0 4px 10px rgba(0, 0, 0, 0.4); 
+			box-shadow:0 4px 10px rgba(0, 0, 0, 0.4); 
 		}
 		input{
 			color: #505050;
@@ -43,14 +47,12 @@
 		}
 		</style>
 	</head>
-	<body>
+	<body style="background-color:#def3fd">
 		<div class="settings" id="main">
 		<br>
-			<img src="https://guides.vdo.ninja/assets/images/logo.png" alt="Ninja" style="width: 40px;"/>
-		<br>
-			<b>VDO.Ninja 参数生成器 (By: <a href="https://space.bilibili.com/1655906003">艾洛Airo<a>)</b>
+			<b>VDO.Ninja <img src="https://guides.vdo.ninja/assets/images/logo.png" alt="Ninja" style="width: 14px;"/> 参数生成器 (By: <a href="https://space.bilibili.com/1655906003">艾洛Airo<a>)</b>
 		<HR>
-			<video autoplay="true" id="player" style="width: 320px;height: 180px;" controls></video>
+			<video autoplay="true" id="player" style="height: 180px;" controls></video>
 			<div>
 				默认摄像头:
 				<select id="videoSource" onchange="generateURL()"></select>
@@ -58,7 +60,7 @@
 				默认麦克风:
 				<select id="audioSource" onchange="generateURL()"></select>
 			</div>
-			<button type="button" id="reget" style="width: 100%;" onclick="getDevice()" >更新设备列表</button>
+			<button type="button" id="reget" style="width: 350px;" onclick="getDevice()" >更新设备列表</button>
 			<HR>
 				串流码率 (10~60000Kbps):
 				<input type="number" id="vb" value="3000" oninput="if(value>60000)value=60000;if(value<10)value=10" onchange="generateURL()" />
@@ -94,12 +96,12 @@
 			<HR>
 			<div>
 				串流链接: 
-				<input type="text" id="server" style="width:310px" readonly="true">
+				<input type="text" id="server" style="width:300px" readonly="true">
 			<br>
 				分享链接: 
-				<input type="text" id="client" style="width:310px" readonly="true">
+				<input type="text" id="client" style="width:300px" readonly="true">
 			<HR>
-				<button type="button" id="goto" onclick="start()" style="width:100%">开始串流<br>(链接可复制保留重复使用)</button>
+				<button type="button" id="goto" onclick="start()" style="width:350px">开始串流<br>(链接可复制保留重复使用)</button>
 			</div>
 		</div>
 		<script>
