@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>VDO.Ninja 参数生成器</title>
+		<link rel="icon" href="https://vdo.ninja/media/favicon.ico">
+		<style type="text/css">
+		.settings {
+			font-family: sans-serif;
+			line-height: 35px;
+			text-align: center;
+			color: #505050;
+			background-color: #fff;
+			border-radius: 20px;
+			width: 400px;
+			margin: auto;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		}
+		input{
+			color: #505050;
+			outline-style: none ;
+			border: 1px solid #ccc; 
+			border-radius: 3px;
+			padding: 2px 0px;
+			font-size: 14px;
+			font-weight: 700;
+		}
+		button{
+			border-width: 0px;
+			border-radius: 3px;
+			background: #1E90FF;
+			cursor: pointer;
+			outline: none;
+			font-family: sans-serif;
+			color: white;
+			font-size: 13px;
+			font-weight:bold;
+		}
+		</style>
+	</head>
+	<body>
+		<div class="settings" id="main">
+		<br>
+			<img src="https://guides.vdo.ninja/assets/images/logo.png" alt="Ninja" style="width: 64px;"/>
+		<br>
+			<b>VDO.Ninja 参数生成器 (By: <a href="https://space.bilibili.com/1655906003">艾洛Airo<a>)</b>
+		<HR>
+			<div>
+				默认摄像头:
+				<select id="videoSource" onchange="generateURL()"></select>
+				<button type="button" id="reget" onclick="getCameras()" >更新列表</button>
+			<br>
+				串流码率 (10~60000Kbps):
+				<input type="number" id="vb" value="3000" oninput="if(value>60000)value=60000;if(value<10)value=10" onchange="generateURL()" />
+			<br>
+			<div>
+				画面分辨率:
+				<select id="quality" onchange="generateURL()">
+				　　<option value="0">1080P</option>
+				　　<option value="1">720P(省电)</option>
+				　　<option value="2">360P</option>
+				</select>
+				串流编码器:
+				<select id="codec" onchange="generateURL()">
+					<option value="vp9">VP9(推荐)</option>
+				　　 <option value="vp8">VP8</option>
+				　　 <option value="h264">H264</option>
+					<option value="av1">AV1(不推荐)</option>
+				</select>
+			</div>
+
+				镜像视频画面:<input type="CheckBox" id="mirror" value="1" onchange="generateURL()"/>
+				启用音频设备:<input type="CheckBox" id="audio" value="1" onchange="generateURL()"/>
+				启用屏幕分享:<input type="CheckBox" id="screen" value="1" onchange="generateURL()"/>
+			</div>
+			<HR>
+				房间ID (仅字母):
+				<input type="text" id="room" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')" onchange="generateURL()" />
+				<button type="button" id="random" onclick="randomRoomID();generateURL()">随机生成</button>
+			<br>
+				房间密码 (可选):
+				<input type="text" id="password" onchange="generateURL()" />
+				<button type="button" id="random2" onclick="randomPwd();generateURL()">随机生成</button>
+			<HR>
+			<div>
+				串流链接 (自己推流用, 不需要导入OBS)<br>
+				<input type="text" id="server" style="width:100%" readonly="true">
+			<br>
+				分享链接 (发给对方, 需对方导入OBS浏览器源)<br>
+				<input type="text" id="client" style="width:100%" readonly="true">
+			<HR>
+				<button type="button" id="goto" onclick="start()" style="width:100%">开始串流<br>(链接可复制保留重复使用)</button>
+			</div>
+		</div>
+		<script>
+			function checkCore(){
+				var isFirefox =  navigator.userAgent.indexOf('Firefox') > -1
+				var isChrome =  navigator.userAgent.indexOf('Chrome') > -1
+				var isChromium =  navigator.userAgent.indexOf('Chromium') > -1
+				if (isFirefox || isChrome || isChromium){
+					if (isFirefox){
+						alert("您正在使用Firefox浏览器进行串流.\n请勾选\"记住此决定\"并点击[允许]授予摄像头权限,\n然后点击[更新设备]以获取摄像头列表.\n此权限仅用于只检索设备, 不会记录画面.")
+					}else{
+						alert("您正在Chrome(或Chromium内核)浏览器进行串流.\n请点击[允许]授予摄像头权限, 然后点击[更新设备]获取摄像头列表.\n此权限仅用于只检索设备, 不会记录画面.")
+					}
+					navigator.mediaDevices.getUserMedia({video: true});
+				}else{
+					document.body.innerHTML = "";
+					alert("请使用Chrome/Chromium或Firefox内核的浏览器来进行串流!");
+				}
+			}
+		</script>
+		<script>
+			function start() {
+				var Url2 = document.getElementById('client');
+				Url2.select();
+				document.execCommand('Copy');
+				alert('!您正在作为发送端, 接下来会显示默认摄像头预览, 请勿采集浏览器画面!\n\n点击 [开始] 启动串流(需允许网站获取摄像头权限), 并不要关闭浏览器!\n分享链接已经复制到您的剪贴板, 请发给对方即可.');
+				location = document.getElementById('server').value
+			}
+			function getSelectText(id) {
+				var obj = document.getElementById(id)
+				var index = obj.selectedIndex;
+				return obj.options[index].text;
+			}
+			function getSelectValue(id) {
+				var obj = document.getElementById(id)
+				var index = obj.selectedIndex;
+				return obj.options[index].value;
+			}
+			function getSelectCheck(id,v1,v2) {
+				var state = document.getElementById(id)
+				if (state.checked) {
+					return v1;
+				}else{
+					return v2;
+				}
+			}
+			function generateURL() {
+				var server = document.getElementById("server");
+				var client = document.getElementById("client");
+				var vb = document.getElementById("vb").value;
+				var roomID = document.getElementById("room").value;
+				var password = document.getElementById("password").value
+				var quality = getSelectValue("quality");
+				var codec = getSelectValue("codec");
+				
+				var mirror = getSelectCheck("mirror","&mirror","")
+				var audio = getSelectCheck("audio","","&ad=0")
+				var screens = getSelectCheck("screen","","&wc")
+				var cameraLabel = getSelectText("videoSource");
+				
+				var serverUrl = "https://vdo.ninja/?push="+roomID+"&vd="+encodeURIComponent(cameraLabel)+"&q="+quality+"&p="+password+mirror+audio+screens+"&ln=cn"
+				var clientUrl = "https://vdo.ninja/?view="+roomID+"&codec="+codec+"&vb="+vb+"&p="+password+"&cv"
+				server.value = serverUrl
+				client.value = clientUrl
+			}
+			function random(char) {
+			 　　len = 16 || 32;
+			 　　var $chars = char;
+			　 　var maxPos = $chars.length;
+			　 　var pwd = '';
+			　 　for (i = 0; i < len; i++) {
+			　　 　　pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+			　　 }
+				return pwd;
+			}
+			function randomRoomID() {
+				var room = document.getElementById('room');
+				room.value = random('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz');
+				room = null;
+			}
+			function randomPwd() {
+				var pwd = document.getElementById('password');
+				pwd.value = random('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890');
+				pwd = null;
+			}
+			randomRoomID()
+			randomPwd()
+			//generateURL()
+		</script>
+		<script>
+			function getCameras() {
+				'use strict'
+				var vedioSource = document.querySelector("select#videoSource");
+				vedioSource.innerHTML = "";
+				if(!navigator.mediaDevices ||
+					!navigator.mediaDevices.enumerateDevices){
+					console.log('enumerateDevices is not supported!'); 
+				}else{
+					navigator.mediaDevices.getUserMedia({video: true});
+					navigator.mediaDevices.enumerateDevices()
+					.then(gotDevices)
+					.catch(handleError);
+				}
+				function gotDevices(deviceInfos){
+					deviceInfos.forEach(function(deviceInfo){
+						console.log(deviceInfo.kind + ": label = "
+						+ deviceInfo.label + ": id = "
+						+ deviceInfo.deviceId + ": groupId = "
+						+ deviceInfo.groupId);
+					var option = document.createElement('option');
+					option.text = deviceInfo.label;
+					option.value = deviceInfo.deviceId;
+					if(deviceInfo.kind === 'videoinput'){
+						videoSource.appendChild(option);
+					}
+					});
+					if (getSelectText("videoSource") == ""){
+						checkCore()
+					}
+					generateURL()
+				} 
+				function handleError(err){
+					console.log(err.name + " : " + err.message);
+				}
+			}
+			getCameras()
+		</script>
+	</body>
