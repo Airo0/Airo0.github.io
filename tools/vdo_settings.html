@@ -87,12 +87,12 @@
 			</div>
 			<HR>
 				房间ID (仅字母):
-				<input type="text" id="room" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'')" onchange="generateURL()" />
-				<button type="button" id="random" onclick="randomRoomID();generateURL()">随机生成</button>
+				<input type="text" id="room" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'');generateURL()" onchange="if(this.value==''){randomRoomID();generateURL()}" />
+				<button type="button" id="random" onclick="randomRoomID();generateURL()">重新生成</button>
 			<br>
 				房间密码 (可选):
-				<input type="text" id="password" onchange="generateURL()" />
-				<button type="button" id="random2" onclick="randomPwd();generateURL()">随机生成</button>
+				<input type="text" id="password" onkeyup="generateURL()" />
+				<button type="button" id="random2" onclick="document.getElementById('password').value='';generateURL()">不设密码</button>
 			<HR>
 			<div>
 				串流链接: 
@@ -108,11 +108,13 @@
 			var isFirefox =  navigator.userAgent.indexOf('Firefox') > -1
 			var isChrome =  navigator.userAgent.indexOf('Chrome') > -1
 			var isChromium =  navigator.userAgent.indexOf('Chromium') > -1
-			if (isFirefox || isChrome || isChromium){
-				console.log("Browser....[OK]")
+			var isSafari =  navigator.userAgent.indexOf('Safari') > -1
+			if (isFirefox || isChrome || isChromium || isSafari){
+				if (isSafari) {
+					alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
+				}
 			}else{
-				document.getElementById("main").innerHTML = "<br>请使用Chrome/Chromium或Firefox内核的浏览器!";
-				alert("请使用Chrome/Chromium或Firefox内核的浏览器来进行串流!");
+				document.getElementById("main").innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
 			}
 			function start() {
 				var Url2 = document.getElementById('client');
@@ -157,7 +159,10 @@
 				var client = document.getElementById("client");
 				var vb = "&vb=" + document.getElementById("vb").value;
 				var roomID = document.getElementById("room").value;
-				var password = "&p=" + document.getElementById("password").value
+				var password = document.getElementById("password").value
+				if (password != "") {
+					password = "&p=" + password
+				}
 				var quality = "&q=" + getSelectValue("quality");
 				var codec = "&codec=" + getSelectValue("codec");
 				
