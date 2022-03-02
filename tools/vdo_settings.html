@@ -52,7 +52,7 @@
 		<br>
 			<b>VDO.Ninja <img src="https://guides.vdo.ninja/assets/images/logo.png" alt="Ninja" style="width: 14px;"/> 参数生成器 (By: <a href="https://space.bilibili.com/1655906003">艾洛Airo<a>)</b>
 		<HR>
-			<video autoplay="true" id="player" style="height: 180px;" controls></video>
+			<video autoplay="true" muted="true" id="player" style="height: 180px;" controls></video>
 			<div>
 				默认摄像头:
 				<select id="videoSource" onchange="generateURL()"></select>
@@ -227,10 +227,10 @@
 				};
 
 				audioSourcesSelect.onchange = function(){
-					//MediaStreamHelper.requestStream().then(function(stream){
-					//	MediaStreamHelper._stream = stream;
-					//	videoPlayer.srcObject = stream;
-					//});
+					MediaStreamHelper.requestStream().then(function(stream){
+						MediaStreamHelper._stream = stream;
+						videoPlayer.srcObject = stream;
+					});
 					generateURL();
 				};
 
@@ -272,7 +272,7 @@
 					MediaStreamHelper._stream = stream;
 
 					// Select the Current Streams in the list of devices
-					//audioSourcesSelect.selectedIndex = [...audioSourcesSelect.options].findIndex(option => option.text === stream.getAudioTracks()[0].label);
+					audioSourcesSelect.selectedIndex = [...audioSourcesSelect.options].findIndex(option => option.text === stream.getAudioTracks()[0].label);
 					videoSourcesSelect.selectedIndex = [...videoSourcesSelect.options].findIndex(option => option.text === stream.getVideoTracks()[0].label);
 
 					// Play the current stream in the Video element
