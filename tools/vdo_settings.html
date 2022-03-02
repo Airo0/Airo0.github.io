@@ -220,10 +220,10 @@
 				};
 
 				audioSourcesSelect.onchange = function(){
-					MediaStreamHelper.requestStream().then(function(stream){
-						MediaStreamHelper._stream = stream;
-						videoPlayer.srcObject = stream;
-					});
+					//MediaStreamHelper.requestStream().then(function(stream){
+					//	MediaStreamHelper._stream = stream;
+					//	videoPlayer.srcObject = stream;
+					//});
 					generateURL();
 				};
 
