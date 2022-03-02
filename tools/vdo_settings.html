@@ -110,8 +110,10 @@
 			var isChromium =  navigator.userAgent.indexOf('Chromium') > -1
 			var isSafari =  navigator.userAgent.indexOf('Safari') > -1
 			if (isFirefox || isChrome || isChromium || isSafari){
-				if (isSafari) {
-					alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
+				if (!isChrome && !Chromium){
+					if (isSafari) {
+						alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
+					}
 				}
 			}else{
 				document.getElementById("main").innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
