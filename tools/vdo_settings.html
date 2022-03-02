@@ -52,7 +52,7 @@
 			<br>
 				<b style="font-size: 18px;">VDO.Ninja <img src="https://guides.vdo.ninja/assets/images/logo.png" alt="Ninja" style="width: 14px;"/> 参数生成器 (By: <a href="https://space.bilibili.com/1655906003">艾洛Airo<a>)</b>
 			<HR>
-				<video autoplay="true" muted="true" id="player" style="width: 320px;height: 180px;" controls></video>
+				<video autoplay="true" muted="true" id="player" style="height: 180px;" controls></video>
 				<div>
 					默认摄像头:
 					<select id="videoSource" onchange="generateURL()" style="width:260px"></select>
@@ -107,13 +107,11 @@
 			<script>
 				var isFirefox =  navigator.userAgent.indexOf('Firefox') > -1
 				var isChrome =  navigator.userAgent.indexOf('Chrome') > -1
-				var isChromium =  navigator.userAgent.indexOf('Chromium') > -1
+				var isEdge =  navigator.userAgent.indexOf('Edg') > -1
 				var isSafari =  navigator.userAgent.indexOf('Safari') > -1
-				if (isFirefox || isChrome || isChromium || isSafari){
-					if (!isChrome && !isChromium){
-						if (isSafari) {
-							alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
-						}
+				if (isFirefox || isChrome || isEdge || isSafari){
+					if (!isChrome && isSafari){
+						alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
 					}
 				}else{
 					document.getElementById("main").innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
@@ -157,16 +155,10 @@
 					}
 				}
 				function generateURL() {
-					var server = document.getElementById("server");
-					var client = document.getElementById("client");
-					var vb = "&vb=" + document.getElementById("vb").value;
-					var roomID = document.getElementById("room").value;
 					var password = document.getElementById("password").value
 					if (password != "") {
 						password = "&p=" + password
 					}
-					var quality = "&q=" + getSelectValue("quality");
-					var codec = "&codec=" + getSelectValue("codec");
 					
 					var screens = getSelectCheck("screen","","&wc")
 					if (screens == ""){
@@ -174,13 +166,21 @@
 					}else{
 						document.getElementById("autostart").checked = 1;
 					}
-					var autostart = getSelectCheck("autostart","&as","")
-					var mirror = getSelectCheck("mirror","&mirror","")
+					
 					var audioLabel = getSelectCheck("audio","","&ad=0")
 					if (audioLabel == "") {
 						audioLabel = "&ad=" + encodeURIComponent(getSelectText("audioSource"))
 					}
+					
 					var cameraLabel = "&vd=" + encodeURIComponent(getSelectText("videoSource"));
+					var server = document.getElementById("server");
+					var client = document.getElementById("client");
+					var vb = "&vb=" + document.getElementById("vb").value;
+					var roomID = document.getElementById("room").value;
+					var quality = "&q=" + getSelectValue("quality");
+					var codec = "&codec=" + getSelectValue("codec");
+					var autostart = getSelectCheck("autostart","&as","")
+					var mirror = getSelectCheck("mirror","&mirror","")
 					
 					var serverUrl = "https://vdo.ninja/?ln=cn&push=" + roomID + cameraLabel + audioLabel + quality + mirror + screens + autostart + password
 					var clientUrl = "https://vdo.ninja/?cv&view=" + roomID + codec + vb + password
@@ -223,6 +223,11 @@
 							MediaStreamHelper._stream = stream;
 							videoPlayer.srcObject = stream;
 						});
+						if (getSelectText("videoSource") == "VtubeStudioCam"){
+							document.getElementById("mirror").checked = 1;
+						}else{
+							document.getElementById("mirror").checked = 0;
+						}
 						generateURL();
 					};
 
