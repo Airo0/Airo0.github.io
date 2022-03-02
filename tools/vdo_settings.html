@@ -110,7 +110,7 @@
 			var isChromium =  navigator.userAgent.indexOf('Chromium') > -1
 			var isSafari =  navigator.userAgent.indexOf('Safari') > -1
 			if (isFirefox || isChrome || isChromium || isSafari){
-				if (!isChrome && !Chromium){
+				if (!isChrome && !isChromium){
 					if (isSafari) {
 						alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
 					}
