@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>VDO.Ninja 参数生成器</title>
+	<link rel="icon" href="../favicon.ico">
+	<link rel="stylesheet" type="text/css" href="settings.css">
+</head>
+
+<body style="background-color:#def3fd">
+	<div class="settings" id="main">
+		<br>
+		<b style="font-size: 18px;">VDO.Ninja <img src="https://guides.vdo.ninja/assets/images/logo.png" alt="Ninja" style="width: 14px;"/> 参数生成器 (By: <a href="https://space.bilibili.com/1655906003">艾洛Airo<a>)</b>
+		<HR>
+		<video autoplay="true" muted="true" id="player" style="height: 180px;" controls></video>
+		<div>
+			默认摄像头:
+			<select id="videoSource" onchange="generateURL()" style="width:260px"></select>
+			<div id="audioSelector" style="display: none">
+				默认麦克风:
+				<select id="audioSource" onchange="generateURL()" style="width:260px"></select>
+			</div>
+			<button type="button" id="reget" style="width: 250px;" onclick="getDevice()">更新设备列表</button>
+			<button type="button" id="advanced" style="width: 96px;background: #f4bf4f;" onclick="advSettings()">显示高级选项</button>
+			<div id="advSettings" style="display: none;">
+				<HR>串流码率 (10~60000Kbps):
+				<input type="number" id="vb" value="3000" oninput="if(value>60000)value=60000;if(value<10)value=10" onchange="generateURL()" />
+				<br>
+				<div>
+					画面分辨率:
+					<select id="quality" onchange="generateURL()">
+						
+						<option value="0">1080P</option>
+						
+						<option value="1">720P(省电)</option>
+						
+						<option value="2">360P</option>
+					</select>
+					串流编码器:
+					<select id="codec" onchange="generateURL()">
+						<option value="vp9">VP9(推荐)</option>
+						<option value="h264">H264</option>
+						
+						<option value="vp8">VP8</option>
+						<option value="av1">AV1(不推荐)</option>
+					</select>
+				</div>
+				自动开播:
+				<input type="CheckBox" id="autostart" value="1" checked='checked' onchange="generateURL()" />镜像画面:
+				<input type="CheckBox" id="mirror" value="1" onchange="generateURL()" />启用音频:
+				<input type="CheckBox" id="audio" value="1" onchange="switchAudio();generateURL()" />屏幕分享:
+				<input type="CheckBox" id="screen" value="1" onchange="generateURL()" />
+
+				<HR>房间ID (仅字母):
+				<input type="text" id="room" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'');generateURL()" onchange="if(this.value==''){randomRoomID();generateURL()}" />
+				<button type="button" id="random" onclick="randomRoomID();generateURL()">重新生成</button>
+				<br>房间密码 (可选):
+				<input type="text" id="password" onkeyup="generateURL()" />
+				<button type="button" id="random2" onclick="document.getElementById('password').value='';generateURL()" style="background: #ed6a5e;">清除密码</button>
+				<HR>
+				<div>
+					串流链接:
+					<input type="text" id="server" style="width:300px" readonly="true">
+					<br>分享链接:
+					<input type="text" id="client" style="width:300px" readonly="true">
+				</div>
+			</div>
+			<HR>
+			<button type="button" id="goto" onclick="start()" style="width :350px; height: 40px; background: #61c554;">开始串流</button>
+		</div>
+	</div>
+	<script type="text/javascript" src="settings.js"></script>
+	<script type="text/javascript" src="getDevices.js"></script>
+</body>
+
+</html>
