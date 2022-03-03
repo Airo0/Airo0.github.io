@@ -1,66 +1,67 @@
+
+let videoSourcesSelect = document.getElementById("videoSource");
+let audioSourcesSelect = document.getElementById("audioSource");
+let videoPlayer = document.getElementById("player");
+
+videoSourcesSelect.onchange = function () {
+    MediaStreamHelper.requestStream().then(function (stream) {
+        MediaStreamHelper._stream = stream;
+        videoPlayer.srcObject = stream;
+    });
+    if (getSelectText("videoSource") == "VTubeStudioCam") {
+        document.getElementById("mirror").checked = 1;
+    } else {
+        document.getElementById("mirror").checked = 0;
+    }
+    generateURL();
+};
+
+audioSourcesSelect.onchange = function () {
+    MediaStreamHelper.requestStream().then(function (stream) {
+        MediaStreamHelper._stream = stream;
+        videoPlayer.srcObject = stream;
+    });
+    generateURL();
+};
+
+// Create Helper to ask for permission and list devices
+let MediaStreamHelper = {
+    // Property of the object to store the current stream
+    _stream: null,
+    // This method will return the promise to list the real devices
+    getDevices: function () {
+            return navigator.mediaDevices.enumerateDevices();
+        },
+        // Request user permissions to access the camera and video
+        requestStream: function () {
+            if (this._stream) {
+                this._stream.getTracks().forEach(track => {
+                    track.stop();
+                });
+            }
+
+            const audioSource = audioSourcesSelect.value;
+            const videoSource = videoSourcesSelect.value;
+            const constraints = {
+                audio: {
+                    deviceId: audioSource ? {
+                        exact: audioSource
+                    } : undefined
+                },
+                video: {
+                    deviceId: videoSource ? {
+                        exact: videoSource
+                    } : undefined
+                }
+            };
+
+            return navigator.mediaDevices.getUserMedia(constraints);
+        }
+};
+    
 function getDevice() {
-    let videoSourcesSelect = document.getElementById("videoSource");
-    let audioSourcesSelect = document.getElementById("audioSource");
     videoSourcesSelect.innerHTML = "";
     audioSourcesSelect.innerHTML = "";
-    let videoPlayer = document.getElementById("player");
-
-    videoSourcesSelect.onchange = function () {
-        MediaStreamHelper.requestStream().then(function (stream) {
-            MediaStreamHelper._stream = stream;
-            videoPlayer.srcObject = stream;
-        });
-        if (getSelectText("videoSource") == "VTubeStudioCam") {
-            document.getElementById("mirror").checked = 1;
-        } else {
-            document.getElementById("mirror").checked = 0;
-        }
-        generateURL();
-    };
-
-    audioSourcesSelect.onchange = function () {
-        MediaStreamHelper.requestStream().then(function (stream) {
-            MediaStreamHelper._stream = stream;
-            videoPlayer.srcObject = stream;
-        });
-        generateURL();
-    };
-
-    // Create Helper to ask for permission and list devices
-    let MediaStreamHelper = {
-        // Property of the object to store the current stream
-        _stream: null,
-        // This method will return the promise to list the real devices
-        getDevices: function () {
-                return navigator.mediaDevices.enumerateDevices();
-            },
-            // Request user permissions to access the camera and video
-            requestStream: function () {
-                if (this._stream) {
-                    this._stream.getTracks().forEach(track => {
-                        track.stop();
-                    });
-                }
-
-                const audioSource = audioSourcesSelect.value;
-                const videoSource = videoSourcesSelect.value;
-                const constraints = {
-                    audio: {
-                        deviceId: audioSource ? {
-                            exact: audioSource
-                        } : undefined
-                    },
-                    video: {
-                        deviceId: videoSource ? {
-                            exact: videoSource
-                        } : undefined
-                    }
-                };
-
-                return navigator.mediaDevices.getUserMedia(constraints);
-            }
-    };
-
     // Request streams (audio and video), ask for permission and display streams in the video element
     MediaStreamHelper.requestStream().then(function (stream) {
         console.log(stream);
