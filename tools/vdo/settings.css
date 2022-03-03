@@ -6,7 +6,7 @@
 	background-color: #fff;
 	border-radius: 20px;
 	width: 430px;
-	height: 425px;
+	height: 435px;
 	margin: auto;
 	position: absolute;
 	top: 0;
@@ -16,6 +16,55 @@
 	-moz-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 	-webkit-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.btn {
+	border-width: 0px;
+	border-radius: 3px;
+	background: #1E90FF;
+	cursor: pointer;
+	outline: none;
+	font-family: sans-serif;
+	color: white;
+	font-size: 13px;
+	display: inline-block;
+}
+
+.streaming {
+	border-width: 0px;
+	border-radius: 3px;
+	background: #ec857c;
+	cursor: pointer;
+	outline: none;
+	font-family: sans-serif;
+	color: white;
+	font-size: 13px;
+	font-weight: bold;
+	-webkit-animation-timing-function:ease-in-out;
+	-webkit-animation-name:breathe;
+	-webkit-animation-duration:1000ms;
+	-webkit-animation-iteration-count:infinite;
+	-webkit-animation-direction:alternate;
+}
+
+@-webkit-keyframes breathe {
+	0% { background-color: #ec857c; }
+	100% { background-color: #b8271a; }
+}
+
+@keyframes breathe {
+	0% { background-color: #ec857c; }
+	100% { background-color: #b8271a; }
+}
+
+@-moz-keyframes breathe {
+	0% { background-color: #ec857c; }
+	100% { background-color: #b8271a; }
+}
+
+@-o-keyframes breathe {
+	0% { background-color: #ec857c; }
+	100% { background-color: #b8271a; }
 }
 
 input {
@@ -29,14 +78,4 @@ input {
 	text-align: center;
 }
 
-button {
-	border-width: 0px;
-	border-radius: 3px;
-	background: #1E90FF;
-	cursor: pointer;
-	outline: none;
-	font-family: sans-serif;
-	color: white;
-	font-size: 13px;
-	font-weight: bold;
-}
+a { text-decoration:none; }
