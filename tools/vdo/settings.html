@@ -54,9 +54,10 @@
 				<HR>房间ID (仅字母):
 				<input type="text" id="room" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'');generateURL()" onchange="if(this.value==''){randomRoomID();generateURL()}" />
 				<button type="button" id="random" onclick="randomRoomID();generateURL()">重新生成</button>
-				<br>房间密码 (可选):
+				<br>密码 (可不设):
 				<input type="text" id="password" onkeyup="generateURL()" />
-				<button type="button" id="random2" onclick="document.getElementById('password').value='';generateURL()" style="background: #ed6a5e;">清除密码</button>
+				<button type="button" id="random2" onclick="randomPwd();generateURL()">生成</button>
+				<button type="button" id="cleanPwd" onclick="document.getElementById('password').value='';generateURL()" style="background: #ed6a5e;">清除</button>
 				<HR>
 				<div>
 					串流链接:
@@ -72,7 +73,6 @@
 	</div>
 	<input type="text" id="hiddenClient" style="position: absolute; top: -100px;" readonly="true">
 	<script type="text/javascript" src="settings.js"></script>
-	<script type="text/javascript" src="getDevices.js"></script>
 </body>
 
 </html>
