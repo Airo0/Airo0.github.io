@@ -11,8 +11,7 @@ if (isFirefox || isChrome || isEdge || isSafari) {
 }
 
 function start() {
-    var Url2 = document.getElementById('client');
-    Url2.select();
+    document.getElementById('hiddenClient').select();
     document.execCommand('Copy');
     if (document.getElementById("autostart").checked) {
         alert('点击 [确定] 并授予摄像头权限以串流, 推流时请勿关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.');
@@ -79,12 +78,12 @@ function advSettings() {
 }
 
 function generateURL() {
-    var password = document.getElementById("password").value
+    var password = document.getElementById("password").value;
     if (password != "") {
         password = "&p=" + password
     }
 
-    var screens = getSelectCheck("screen", "", "&wc")
+    var screens = getSelectCheck("screen", "", "&wc");
     if (screens == "") {
         document.getElementById("autostart").checked = 0;
     } else {
@@ -99,17 +98,19 @@ function generateURL() {
     var cameraLabel = "&vd=" + encodeURIComponent(getSelectText("videoSource"));
     var server = document.getElementById("server");
     var client = document.getElementById("client");
+    var hiddenClient = document.getElementById("hiddenClient");
     var vb = "&vb=" + document.getElementById("vb").value;
     var roomID = document.getElementById("room").value;
     var quality = "&q=" + getSelectValue("quality");
     var codec = "&codec=" + getSelectValue("codec");
-    var autostart = getSelectCheck("autostart", "&as", "")
-    var mirror = getSelectCheck("mirror", "&mirror", "")
+    var autostart = getSelectCheck("autostart", "&as", "");
+    var mirror = getSelectCheck("mirror", "&mirror", "");
 
     var serverUrl = "https://vdo.ninja/?ln=cn&push=" + roomID + cameraLabel + audioLabel + quality + mirror + screens + autostart + password
     var clientUrl = "https://vdo.ninja/?cv&view=" + roomID + codec + vb + password
-    server.value = serverUrl
-    client.value = clientUrl
+    server.value = serverUrl;
+    client.value = clientUrl;
+    hiddenClient.value = clientUrl;
 }
 
 function random(char) {　　
