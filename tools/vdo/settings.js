@@ -117,26 +117,31 @@ function getDevice() {
     });
 }
 
-function gotoVDO(state) {
-    if (state) {
+function start() {
+    var btn = document.getElementById("start")
+    if (btn.innerHTML == "开始串流"){
+        btn.innerHTML = "正在串流, 点击可停止...";
+        btn.className = "streaming";
+        document.getElementById("preview").style = "display: none;";
+        document.getElementById("advSettings").style = "display: none;";
+        document.getElementById("main").style = "height: 170px";
+        var url = document.getElementById("server").value;
+        var iframe = document.createElement('iframe'); 
+        iframe.src = url;
+        iframe.id = "ninja";
+        iframe.style = "display: none;";
+        iframe.allow = "camera;microphone";
+        document.body.appendChild(iframe);
         document.getElementById('hiddenClient').select();
         document.execCommand('Copy');
-        location = document.getElementById('server').value;
+        alert("分享链接已经复制到您的剪贴板, 请发给对方即可.");
+    } else {
+        btn.innerHTML = "开始串流";
+        btn.className = "btn";
+        document.getElementById("ninja").remove();
+        document.getElementById("main").style = "heigh: 435px";
+        document.getElementById("preview").style = "display: block;";
     }
-}
-
-function start(auto) {
-	var url = document.getElementById("client").value
-	var checked = document.getElementById("autostart").checked
-	if (!auto){
-		var msg = "点击 [确定] 并授予摄像头权限以串流, 推流时不要关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.";
-		if (!checked) { msg = "点击 [确定] 并选择您要推流的是摄像头还是屏幕.\n请允许网站访问摄像头以进行串流, 推流时不要关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可."; }
-		gotoVDO(confirm(msg));
-	}else{
-		var msg = "请手动复制此分享链接, 并发送给对方.\n点击 [确定] 并授予摄像头权限以串流, 推流时不要关闭浏览器.";
-		if (!checked) { msg = "请手动复制此分享链接, 并发送给对方.\n点击 [确定] 并选择您要推流的是摄像头还是屏幕.\n请允许网站访问摄像头以进行串流, 推流时不要关闭浏览器."; }
-		gotoVDO(prompt(msg,url));
-	}
 }
 
 function getSelectText(id) {
@@ -176,10 +181,6 @@ function checkVTS() {
             break;
         }
     }
-    //if (camIndex) {
-    //    var msg = "检测到 " + videoSource[camIndex].text + " 虚拟摄像头, 是否立即开始串流?";
-    //    if (confirm(msg) == true) { start(true); }
-    //}
 }
 
 function switchAudio() {
@@ -188,10 +189,10 @@ function switchAudio() {
     var audio = document.getElementById("audio")
     if (audio.checked) {
         audioSelector.style = "display: block"
-        mainDiv.style = "height: 720px;";
+        mainDiv.style = "height: 620px;";
     } else {
         audioSelector.style = "display: none"
-        mainDiv.style = "height: 690px;";
+        mainDiv.style = "height: 590px;";
     }
 }
 
@@ -203,16 +204,16 @@ function advSettings() {
     if (button.innerHTML == "显示高级选项") {
         button.innerHTML = "隐藏高级选项"
         advSettings.style = "display: block;";
-        mainDiv.style = "height: 690px;";
+        mainDiv.style = "height: 590px;";
         if (audio.checked) {
-            mainDiv.style = "height: 720px;";
+            mainDiv.style = "height: 620px;";
         }
     } else {
         button.innerHTML = "显示高级选项"
         advSettings.style = "display: none;"
-        mainDiv.style = "height: 425px;";
+        mainDiv.style = "height: 435px;";
         if (audio.checked) {
-            mainDiv.style = "height: 455px;";
+            mainDiv.style = "height: 465px;";
         }
     }
 }
@@ -223,18 +224,12 @@ function generateURL() {
         password = "&p=" + password
     }
 
-    var screens = getSelectCheck("screen", "", "&wc");
-    if (screens == "") {
-        document.getElementById("autostart").checked = 0;
-    } else {
-        document.getElementById("autostart").checked = 1;
-    }
-
     var audioLabel = getSelectCheck("audio", "", "&ad=0")
     if (audioLabel == "") {
         audioLabel = "&ad=" + encodeURIComponent(getSelectText("audioSource"))
     }
-
+    
+    //var autoPause = getSelectCheck("autoPause", "&optimize=0", "")
     var cameraLabel = "&vd=" + encodeURIComponent(getSelectText("videoSource"));
     var server = document.getElementById("server");
     var client = document.getElementById("client");
@@ -243,10 +238,10 @@ function generateURL() {
     var roomID = document.getElementById("room").value;
     var quality = "&q=" + getSelectValue("quality");
     var codec = "&codec=" + getSelectValue("codec");
-    var autostart = getSelectCheck("autostart", "&as", "");
+    //var autostart = getSelectCheck("autostart", "&as", "");
     var mirror = getSelectCheck("mirror", "&mirror", "");
 
-    var serverUrl = "https://vdo.ninja/?ln=cn&push=" + roomID + cameraLabel + audioLabel + quality + mirror + screens + autostart + password
+    var serverUrl = "https://vdo.ninja/?ln=cn&as&wc&push=" + roomID + cameraLabel + audioLabel + quality + mirror + password
     var clientUrl = "https://vdo.ninja/?cv&view=" + roomID + codec + vb + password
     server.value = serverUrl;
     client.value = clientUrl;
