@@ -178,7 +178,7 @@ function checkVTS() {
     }
     if (camIndex) {
         var msg = "检测到 " + videoSource[camIndex].text + " 虚拟摄像头, 是否立即开始串流?";
-        if (confirm(msg) == true) { start(); }
+        if (confirm(msg) == true) { start(true); }
     }
 }
 
