@@ -160,7 +160,7 @@ function checkVTS() {
         			MediaStreamHelper._stream = stream;
         			videoPlayer.srcObject = stream;
 			});
-			document.getElementById("mirror").checked = 1;
+            		if (videoSource[i].text == "VTubeStudioCam") { document.getElementById("mirror").checked = 1; }
 			generateURL();
 			break;
 		}
