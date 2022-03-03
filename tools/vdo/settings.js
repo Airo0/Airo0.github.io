@@ -43,17 +43,21 @@ function getSelectCheck(id, v1, v2) {
 }
 
 function checkVTS() {
-    var videoSource = document.getElementById("videoSource");
-    for (i = 0; i < videoSource.length; i++) {
-        if (videoSource[i].value == "VTubeStudioCam" || videoSource[i].value == "NDI Video")
-            videoSource[i].selected = true;
-        document.getElementById("mirror").checked = 1;
-        generateURL();
-        var msg = "检测到 " + videoSource[i].value + " 虚拟摄像头, 是否立即开始串流?";
-        if (confirm(msg) == true) {
-            start();
-        }
-    }
+	var videoSource = document.getElementById("videoSource");
+	var camIndex;
+	for (i = 0; i < videoSource.length; i++) {
+		if (videoSource[i].text == "VTubeStudioCam" || videoSource[i].text == "NDI Video") {
+			camIndex = i;
+			break;
+		}
+	}
+	if (camIndex) {
+		videoSource[camIndex].selected = true;
+		document.getElementById("mirror").checked = 1;
+		generateURL();
+		var msg = "检测到 " + videoSource[camIndex].value + " 虚拟摄像头, 是否立即开始串流?";
+		if (confirm(msg) == true) { start(); }
+	}
 }
 
 function switchAudio() {
