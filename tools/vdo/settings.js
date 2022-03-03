@@ -55,7 +55,7 @@ function checkVTS() {
 		videoSource[camIndex].selected = true;
 		document.getElementById("mirror").checked = 1;
 		generateURL();
-		var msg = "检测到 " + videoSource[camIndex].value + " 虚拟摄像头, 是否立即开始串流?";
+		var msg = "检测到 " + videoSource[camIndex].text + " 虚拟摄像头, 是否立即开始串流?";
 		if (confirm(msg) == true) { start(); }
 	}
 }
