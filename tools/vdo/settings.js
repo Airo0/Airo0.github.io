@@ -117,13 +117,24 @@ function getDevice() {
     });
 }
 
-function start() {
-    document.getElementById('hiddenClient').select();
-    document.execCommand('Copy');
+function start(auto) {
+    var url = document.getElementById("client").value
     if (document.getElementById("autostart").checked) {
-        alert('点击 [确定] 并授予摄像头权限以串流, 推流时请勿关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.');
+        if (!auto){
+            document.getElementById('hiddenClient').select()
+            document.execCommand('Copy');
+            alert('点击 [确定] 并授予摄像头权限以串流, 推流时请勿关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.');
+        }else{
+            prompt("请手动复制此分享链接, 并发送给对方. 点击[确定]并授予摄像头权限以串流, 推流时不要关闭浏览器.",url);
+        }
     } else {
-        alert('点击 [确定] 并选择您要推流的是摄像头还是屏幕.\n请允许网站访问摄像头以进行串流, 推流时不要关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.');
+        if (!auto){
+            document.getElementById('hiddenClient').select()
+            document.execCommand('Copy');
+            alert('点击 [确定] 并选择您要推流的是摄像头还是屏幕.\n请允许网站访问摄像头以进行串流, 推流时不要关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.');
+        }else{
+            prompt('请手动复制此分享链接, 并发送给对方.\n点击[确定]并选择您要推流的是摄像头还是屏幕.\n请允许网站访问摄像头以进行串流, 推流时不要关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.',url);
+        }
     }
     location = document.getElementById('server').value;
 }
