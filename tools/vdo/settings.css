@@ -1,0 +1,42 @@
+.settings {
+	font-family: sans-serif;
+	line-height: 30px;
+	text-align: center;
+	color: #505050;
+	background-color: #fff;
+	border-radius: 20px;
+	width: 430px;
+	height: 425px;
+	margin: auto;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	-moz-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	-webkit-box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+input {
+	color: #505050;
+	outline-style: none;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	padding: 2px 0px;
+	font-size: 14px;
+	font-weight: 700;
+	text-align: center;
+}
+
+button {
+	border-width: 0px;
+	border-radius: 3px;
+	background: #1E90FF;
+	cursor: pointer;
+	outline: none;
+	font-family: sans-serif;
+	color: white;
+	font-size: 13px;
+	font-weight: bold;
+}
