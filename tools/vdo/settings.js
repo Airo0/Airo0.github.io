@@ -42,13 +42,18 @@ function getSelectCheck(id, v1, v2) {
     }
 }
 
-function checkVTS(){
+function checkVTS() {
     var str = document.getElementById("sel_text").value;
     var videoSource = document.getElementById("videoSource");
-    for(i=0;i<videoSource.length;i++){
-        if(videoSource[i].value == "VTubeStudioCam")
+    for (i = 0; i < videoSource.length; i++) {
+        if (videoSource[i].value == "VTubeStudioCam" || videoSource[i].value == "NDI Video")
             videoSource[i].selected = true;
-            document.getElementById("mirror").checked = 1;
+        document.getElementById("mirror").checked = 1;
+        generateURL();
+        var msg = "检测到 " + videoSource[i].value + " 虚拟摄像头, 是否立即开始串流?";
+        if (confirm(msg) == true) {
+            start();
+        }
     }
 }
 
