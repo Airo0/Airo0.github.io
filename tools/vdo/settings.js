@@ -117,26 +117,26 @@ function getDevice() {
     });
 }
 
-function start(auto) {
-    var url = document.getElementById("client").value
-    if (document.getElementById("autostart").checked) {
-        if (!auto){
-            document.getElementById('hiddenClient').select()
-            document.execCommand('Copy');
-            alert('点击 [确定] 并授予摄像头权限以串流, 推流时请勿关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.');
-        }else{
-            prompt("请手动复制此分享链接, 并发送给对方. 点击[确定]并授予摄像头权限以串流, 推流时不要关闭浏览器.",url);
-        }
-    } else {
-        if (!auto){
-            document.getElementById('hiddenClient').select()
-            document.execCommand('Copy');
-            alert('点击 [确定] 并选择您要推流的是摄像头还是屏幕.\n请允许网站访问摄像头以进行串流, 推流时不要关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.');
-        }else{
-            prompt('请手动复制此分享链接, 并发送给对方.\n点击[确定]并选择您要推流的是摄像头还是屏幕.\n请允许网站访问摄像头以进行串流, 推流时不要关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.',url);
-        }
+function gotoVDO(state) {
+    if (state) {
+        document.getElementById('hiddenClient').select();
+        document.execCommand('Copy');
+        location = document.getElementById('server').value;
     }
-    location = document.getElementById('server').value;
+}
+
+function start(auto) {
+	var url = document.getElementById("client").value
+	var checked = document.getElementById("autostart").checked
+	if (!auto){
+		var msg = "点击 [确定] 并授予摄像头权限以串流, 推流时不要关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可.";
+		if (!checked) { msg = "点击 [确定] 并选择您要推流的是摄像头还是屏幕.\n请允许网站访问摄像头以进行串流, 推流时不要关闭浏览器.\n分享链接已经复制到您的剪贴板, 请发给对方即可."; }
+		gotoVDO(confirm(msg));
+	}else{
+		var msg = "请手动复制此分享链接, 并发送给对方. 点击 [确定] 并授予摄像头权限以串流, 推流时不要关闭浏览器.";
+		if (!checked) { msg = "请手动复制此分享链接, 并发送给对方.\n点击 [确定] 并选择您要推流的是摄像头还是屏幕.\n请允许网站访问摄像头以进行串流, 推流时不要关闭浏览器."; }
+		gotoVDO(prompt(msg,url));
+	}
 }
 
 function getSelectText(id) {
