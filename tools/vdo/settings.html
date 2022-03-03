@@ -21,7 +21,7 @@
 				默认麦克风:
 				<select id="audioSource" onchange="generateURL()" style="width:260px"></select>
 			</div>
-			<button type="button" id="reget" style="width: 250px;" onclick="getDevice()">更新设备列表</button>
+			<button type="button" id="reget" style="width: 250px;" onclick="getDevice();checkVTS();">更新设备列表</button>
 			<button type="button" id="advanced" style="width: 96px;background: #f4bf4f;" onclick="advSettings()">显示高级选项</button>
 			<div id="advSettings" style="display: none;">
 				<HR>串流码率 (10~60000Kbps):
