@@ -97,6 +97,7 @@ function getDevice() {
                 console.log(device);
 
             });
+            checkVTS();
             generateURL();
         }).catch(function (e) {
             console.log(e.name + ": " + e.message);
@@ -106,4 +107,3 @@ function getDevice() {
     });
 }
 getDevice();
-checkVTS();
