@@ -46,11 +46,10 @@
 						<option value="av1">AV1(不推荐)</option>
 					</select>
 				</div>
-				自动开播:
-				<input type="CheckBox" id="autostart" value="1" checked='checked' onchange="generateURL()" />镜像画面:
-				<input type="CheckBox" id="mirror" value="1" onchange="generateURL()" />启用音频:
-				<input type="CheckBox" id="audio" value="1" onchange="switchAudio();generateURL()" />屏幕分享:
-				<input type="CheckBox" id="screen" value="1" onchange="generateURL()" />
+				<input type="CheckBox" id="autostart" value="1" checked='checked' onchange="generateURL()" />自动开播 
+				<input type="CheckBox" id="mirror" value="1" onchange="generateURL()" />镜像画面 
+				<input type="CheckBox" id="audio" value="1" onchange="switchAudio();generateURL()" />启用音频 
+				<input type="CheckBox" id="screen" value="1" onchange="generateURL()" />屏幕分享 
 
 				<HR>房间ID (仅字母):
 				<input type="text" id="room" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'');generateURL()" onchange="if(this.value==''){randomRoomID();generateURL()}" />
