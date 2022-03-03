@@ -42,6 +42,16 @@ function getSelectCheck(id, v1, v2) {
     }
 }
 
+function checkVTS(){
+    var str = document.getElementById("sel_text").value;
+    var videoSource = document.getElementById("videoSource");
+    for(i=0;i<videoSource.length;i++){
+        if(videoSource[i].value == "VTubeStudioCam")
+            videoSource[i].selected = true;
+            document.getElementById("mirror").checked = 1;
+    }
+}
+
 function switchAudio() {
     var audioSelector = document.getElementById("audioSelector");
     var mainDiv = document.getElementById("main");
