@@ -106,3 +106,4 @@ function getDevice() {
     });
 }
 getDevice();
+checkVTS();
