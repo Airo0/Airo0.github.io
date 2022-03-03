@@ -150,25 +150,25 @@ function getSelectCheck(id, v1, v2) {
 }
 
 function checkVTS() {
-	var videoSource = document.getElementById("videoSource");
-	var camIndex;
-	for (i = 0; i < videoSource.length; i++) {
-		if (videoSource[i].text == "VTubeStudioCam" || videoSource[i].text == "NDI Video") {
-			camIndex = i;
-			videoSource[i].selected = true;
-			MediaStreamHelper.requestStream().then(function (stream) {
-        			MediaStreamHelper._stream = stream;
-        			videoPlayer.srcObject = stream;
-			});
-            		if (videoSource[i].text == "VTubeStudioCam") { document.getElementById("mirror").checked = 1; }
-			generateURL();
-			break;
-		}
-	}
-	if (camIndex) {
-		var msg = "检测到 " + videoSource[camIndex].text + " 虚拟摄像头, 是否立即开始串流?";
-		if (confirm(msg) == true) { start(); }
-	}
+    var videoSource = document.getElementById("videoSource");
+    var camIndex;
+    for (i = 0; i < videoSource.length; i++) {
+        if (videoSource[i].text == "VTubeStudioCam" || videoSource[i].text == "NDI Video") {
+            camIndex = i;
+            videoSource[i].selected = true;
+            MediaStreamHelper.requestStream().then(function (stream) {
+                MediaStreamHelper._stream = stream;
+                videoPlayer.srcObject = stream;
+            });
+            if (videoSource[i].text == "VTubeStudioCam") { document.getElementById("mirror").checked = 1; }
+            generateURL();
+            break;
+        }
+    }
+    if (camIndex) {
+        var msg = "检测到 " + videoSource[camIndex].text + " 虚拟摄像头, 是否立即开始串流?";
+        if (confirm(msg) == true) { start(); }
+    }
 }
 
 function switchAudio() {
