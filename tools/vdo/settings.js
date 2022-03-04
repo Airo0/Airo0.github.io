@@ -102,13 +102,15 @@ function getDevice() {
 
 function start() {
     var btn = document.getElementById("start");
+    var copyBtn = document.getElementById("copy");
     if (btn.innerHTML == "开始串流"){
         MediaStreamHelper.stopStream();
         btn.innerHTML = "正在串流, 点击可停止...";
         btn.className = "streaming";
+        copyBtn.style.display = "";
+        videoPlayer.style.display = "none";
         document.getElementById("basic").style = "display: none;";
         document.getElementById("advSettings").style = "display: none;";
-        videoPlayer.style.display = "none";
         var url = document.getElementById("server").value;
         var iframe = document.createElement('iframe'); 
         iframe.src = url;
@@ -120,10 +122,11 @@ function start() {
         videoPlayer.parentNode.insertBefore(iframe,videoPlayer);
         document.getElementById('hiddenClient').select();
         document.execCommand('Copy');
-        alert("分享链接已经复制到您的剪贴板, 请发给对方即可.");
+        //alert("观看链接已经复制到您的剪贴板, 请发给对方即可.");
     } else {
         btn.innerHTML = "开始串流";
         btn.className = "btn";
+        copyBtn.style.display = "none";
         document.getElementById("ninja").remove();
 		MediaStreamHelper.requestStream();
 		MediaStreamHelper.requestStream().then(function (stream) {
