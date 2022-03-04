@@ -11,56 +11,43 @@ if (isFirefox || isChrome || isEdge || isSafari) {
 }
 
 let videoSourcesSelect = document.getElementById("videoSource");
-let audioSourcesSelect = document.getElementById("audioSource");
 let videoPlayer = document.getElementById("player");
 let MediaStreamHelper = {
     // Property of the object to store the current stream
     _stream: null,
     // This method will return the promise to list the real devices
     getDevices: function () {
-            return navigator.mediaDevices.enumerateDevices();
-        },
-        // Request user permissions to access the camera and video
-        requestStream: function () {
-            if (this._stream) {
-                this._stream.getTracks().forEach(track => {
-                    track.stop();
-                });
-            }
-
-            const audioSource = audioSourcesSelect.value;
-            const videoSource = videoSourcesSelect.value;
-            const constraints = {
-                audio: {
-                    deviceId: audioSource ? {
-                        exact: audioSource
-                    } : undefined
-                },
-                video: {
-                    deviceId: videoSource ? {
-                        exact: videoSource
-                    } : undefined
-                }
-            };
-
-            return navigator.mediaDevices.getUserMedia(constraints);
+        return navigator.mediaDevices.enumerateDevices();
+    },
+    // Request user permissions to access the camera and video
+    requestStream: function () {
+        if (this._stream) {
+            this._stream.getTracks().forEach(track => {
+                track.stop();
+            });
         }
+
+        const videoSource = videoSourcesSelect.value;
+        const constraints = {
+            video: {
+                deviceId: videoSource ? {
+                    exact: videoSource
+                } : undefined
+            }
+        };
+        return navigator.mediaDevices.getUserMedia(constraints);
+    },
+	
+	stopStream: function () {
+		if (this._stream) {
+            this._stream.getTracks().forEach(track => {
+                track.stop();
+            });
+        }
+	}
 };
 
 videoSourcesSelect.onchange = function () {
-    MediaStreamHelper.requestStream().then(function (stream) {
-        MediaStreamHelper._stream = stream;
-        videoPlayer.srcObject = stream;
-    });
-    if (getSelectText("videoSource") == "VTubeStudioCam") {
-        document.getElementById("mirror").checked = 1;
-    } else {
-        document.getElementById("mirror").checked = 0;
-    }
-    generateURL();
-};
-
-audioSourcesSelect.onchange = function () {
     MediaStreamHelper.requestStream().then(function (stream) {
         MediaStreamHelper._stream = stream;
         videoPlayer.srcObject = stream;
@@ -69,16 +56,14 @@ audioSourcesSelect.onchange = function () {
 };
 
 function getDevice() {
-    videoSourcesSelect.innerHTML = "";
-    audioSourcesSelect.innerHTML = "";
-    // Request streams (audio and video), ask for permission and display streams in the video element
+    videoSourcesSelect.innerHTML = '';
+    // Request video stream, ask for permission and display streams in the video element
     MediaStreamHelper.requestStream().then(function (stream) {
         console.log(stream);
         // Store Current Stream
         MediaStreamHelper._stream = stream;
 
         // Select the Current Streams in the list of devices
-        audioSourcesSelect.selectedIndex = [...audioSourcesSelect.options].findIndex(option => option.text === stream.getAudioTracks()[0].label);
         videoSourcesSelect.selectedIndex = [...videoSourcesSelect.options].findIndex(option => option.text === stream.getVideoTracks()[0].label);
 
         // Play the current stream in the Video element
@@ -100,8 +85,6 @@ function getDevice() {
                     break;
                     // Append device to list of Microphone
                 case "audioinput":
-                    option.text = device.label || `Microphone ${videoSourcesSelect.length + 1}`;
-                    audioSourcesSelect.appendChild(option);
                     break;
                 }
                 console.log(device);
@@ -118,20 +101,23 @@ function getDevice() {
 }
 
 function start() {
-    var btn = document.getElementById("start")
+    var btn = document.getElementById("start");
     if (btn.innerHTML == "开始串流"){
+        MediaStreamHelper.stopStream();
         btn.innerHTML = "正在串流, 点击可停止...";
         btn.className = "streaming";
-        document.getElementById("preview").style = "display: none;";
+        document.getElementById("basic").style = "display: none;";
         document.getElementById("advSettings").style = "display: none;";
-        document.getElementById("main").style = "height: 170px";
+        videoPlayer.style.display = "none";
         var url = document.getElementById("server").value;
         var iframe = document.createElement('iframe'); 
         iframe.src = url;
         iframe.id = "ninja";
-        iframe.style = "display: none;";
+        iframe.style = "width: 348px; height: 196px; border-radius: 4px;";
         iframe.allow = "camera;microphone";
-        document.body.appendChild(iframe);
+        iframe.frameBorder="0";
+        iframe.setAttribute("frameBorder", "0");
+        videoPlayer.parentNode.insertBefore(iframe,videoPlayer);
         document.getElementById('hiddenClient').select();
         document.execCommand('Copy');
         alert("分享链接已经复制到您的剪贴板, 请发给对方即可.");
@@ -139,8 +125,14 @@ function start() {
         btn.innerHTML = "开始串流";
         btn.className = "btn";
         document.getElementById("ninja").remove();
-        document.getElementById("main").style = "heigh: 435px";
-        document.getElementById("preview").style = "display: block;";
+		MediaStreamHelper.requestStream();
+		MediaStreamHelper.requestStream().then(function (stream) {
+			MediaStreamHelper._stream = stream;
+			videoPlayer.srcObject = stream;
+		});
+		generateURL();
+		videoPlayer.style.display = "";
+        document.getElementById("basic").style = "display: block;";
     }
 }
 
@@ -176,61 +168,42 @@ function checkVTS() {
                 MediaStreamHelper._stream = stream;
                 videoPlayer.srcObject = stream;
             });
-            if (videoSource[i].text == "VTubeStudioCam") { document.getElementById("mirror").checked = 1; }
             generateURL();
             break;
         }
     }
 }
 
-function switchAudio() {
-    var audioSelector = document.getElementById("audioSelector");
-    var mainDiv = document.getElementById("main");
-    var audio = document.getElementById("audio")
-    if (audio.checked) {
-        audioSelector.style = "display: block"
-        mainDiv.style = "height: 620px;";
+function switchMirror() {
+	var check = document.getElementById("mirror").checked;
+    if (check) {
+        videoPlayer.style.transform = "scaleX(-1)";
     } else {
-        audioSelector.style = "display: none"
-        mainDiv.style = "height: 590px;";
+        videoPlayer.style.transform = "scaleX(1)";
     }
 }
 
 function advSettings() {
     var advSettings = document.getElementById("advSettings");
     var mainDiv = document.getElementById("main");
-    var button = document.getElementById("advanced");
-    var audio = document.getElementById("audio")
-    if (button.innerHTML == "显示高级选项") {
-        button.innerHTML = "隐藏高级选项"
+    var btn1 = document.getElementById("advanced");
+    if (btn1.innerHTML == "显示高级选项") {
+        btn1.innerHTML = "隐藏高级选项"
         advSettings.style = "display: block;";
-        mainDiv.style = "height: 590px;";
-        if (audio.checked) {
-            mainDiv.style = "height: 620px;";
-        }
     } else {
-        button.innerHTML = "显示高级选项"
+        btn1.innerHTML = "显示高级选项"
         advSettings.style = "display: none;"
-        mainDiv.style = "height: 435px;";
-        if (audio.checked) {
-            mainDiv.style = "height: 465px;";
-        }
     }
 }
 
 function generateURL() {
     var password = document.getElementById("password").value;
-    if (password != "") {
-        password = "&p=" + password
-    }
-
-    var audioLabel = getSelectCheck("audio", "", "&ad=0")
-    if (audioLabel == "") {
-        audioLabel = "&ad=" + encodeURIComponent(getSelectText("audioSource"))
-    }
-    
+    if (password != "") { password = "&p=" + password; }
     //var autoPause = getSelectCheck("autoPause", "&optimize=0", "")
-    var cameraLabel = "&vd=" + encodeURIComponent(getSelectText("videoSource"));
+	var camera = getSelectText("videoSource");
+    var cameraLabel = "&vd=" + encodeURIComponent(camera);
+	var mirror = getSelectCheck("mirror", "&mirror", "");
+	if (camera == "VTubeStudioCam") { mirror = "&mirror"; }
     var server = document.getElementById("server");
     var client = document.getElementById("client");
     var hiddenClient = document.getElementById("hiddenClient");
@@ -238,10 +211,7 @@ function generateURL() {
     var roomID = document.getElementById("room").value;
     var quality = "&q=" + getSelectValue("quality");
     var codec = "&codec=" + getSelectValue("codec");
-    //var autostart = getSelectCheck("autostart", "&as", "");
-    var mirror = getSelectCheck("mirror", "&mirror", "");
-
-    var serverUrl = "https://vdo.ninja/?ln=cn&as&wc&push=" + roomID + cameraLabel + audioLabel + quality + mirror + password
+    var serverUrl = "https://vdo.ninja/?ln=cn&as&wc&fullscreen&cleanish&ad=0&push=" + roomID + cameraLabel + quality + mirror + password
     var clientUrl = "https://vdo.ninja/?cv&view=" + roomID + codec + vb + password
     server.value = serverUrl;
     client.value = clientUrl;
@@ -249,14 +219,14 @@ function generateURL() {
 }
 
 function random(char) {　　
-    len = 16 || 32;　　
+    len = 12 || 32;　　
     var $chars = char;　　
     var maxPos = $chars.length;　　
-    var pwd = '';　　
+    var str = '';　　
     for (i = 0; i < len; i++) {　　　　
-        pwd += $chars.charAt(Math.floor(Math.random() * maxPos));　　
+        str += $chars.charAt(Math.floor(Math.random() * maxPos));　　
     }
-    return pwd;
+    return str;
 }
 
 function randomRoomID() {
