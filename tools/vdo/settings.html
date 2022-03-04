@@ -1,74 +1,54 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<meta charset="UTF-8">
 	<title>VDO快速串流</title>
 	<link rel="icon" href="/favicon.ico">
 	<link rel="stylesheet" type="text/css" href="settings.css">
 </head>
-
-<body style="background-color:#def3fd">
+<body>
 	<div class="settings" id="main">
-		<br>
-		<div style="line-height: 15px">
+		<div style="line-height: 18px">
 		<b style="font-size: 25px;">VDO <img src="https://guides.vdo.ninja/assets/images/logo.png" alt="Ninja" style="width: 18px;"/> 快速串流</b>
 		<br>
 		<b style="font-size: 10px;" >要不要来我的妙妙屋OvO (B站主页: <a href="https://space.bilibili.com/1655906003">@艾洛Airo</a>)</b>
 		</div>
-		
 		<div>
-		<div id="preview">
-		<HR>
-			<video autoplay="true" muted="true" id="player" style="height: 180px;" controls></video>
-			<br>
-			默认摄像头:<select id="videoSource" onchange="generateURL()" style="width:260px"></select>
-			
-			<div id="audioSelector" style="display: none">
-				默认麦克风:<select id="audioSource" onchange="generateURL()" style="width:260px"></select>
-			</div>
-			
-			<button type="button" class="btn" id="reget" style="width: 225px;" onclick="getDevice();checkVTS();">更新设备列表</button>
-			<button type="button" class="btn" id="advanced" style="width: 120px;background: #e8a31f;" onclick="advSettings()">显示高级选项</button>
+		<hr>
+		<video autoplay="true" muted="true" id="player" style="border-radius: 4px;height: 196px;" controls></video>
+		<div id="basic">
+			默认摄像头:
+			<select id="videoSource" onchange="generateURL()" style="width:200px"></select>
+			<input type="CheckBox" id="mirror" value="1" onchange="switchMirror();generateURL()" />镜像
+			<button type="button" class="btn" id="reget" style="width: 225px;height: 25px;font-weight:bold;" onclick="getDevice();checkVTS();">更新设备列表</button>
+			<button type="button" class="btn" id="advanced" style="width: 120px;height: 25px;background: #d8a748;font-weight:bold;" onclick="advSettings()">显示高级选项</button>
 		</div>
 			<div id="advSettings" style="display: none;">
-			
-				<HR>
-				
-					画面分辨率:
+				<hr>
+					画质
 					<select id="quality" onchange="generateURL()">
-						
-						<option value="0">1080P</option>
-						
-						<option value="1">720P(省电)</option>
-						
-						<option value="2">360P</option>
+						<option value="0">高清</option>
+						<option value="1">普通</option>
+						<option value="2">流畅</option>
 					</select>
-					串流编码器:
+					&ensp;编码
 					<select id="codec" onchange="generateURL()">
-						<option value="vp9">VP9(推荐)</option>
+						<option value="vp9">VP9</option>
 						<option value="h264">H264</option>
 						
 						<option value="vp8">VP8</option>
-						<option value="av1">AV1(不推荐)</option>
+						<option value="av1">AV1</option>
 					</select>
-				<br>
-				<!--<input type="CheckBox" id="autostart" value="1" checked='checked' onchange="generateURL()" />自动开播-->
-				<!--<input type="CheckBox" id="autopause" value="1" checked='checked' onchange="generateURL()" />不可见时暂停-->
-				串流码率/Kbps:
-				<input type="number" id="vb" value="3000" style="width: 70px;" oninput="if(value>60000)value=60000;if(value<1)value=1" onchange="generateURL()" />
-				<input type="CheckBox" id="mirror" value="1" onchange="generateURL()" />镜像画面
-				<input type="CheckBox" id="audio" value="1" onchange="switchAudio();generateURL()" />启用音频
-				<!--<input type="CheckBox" id="screen" value="1" onchange="generateURL()" />屏幕分享-->
-
-				<HR>房间ID (仅字母):
+				&ensp;码率
+				<input type="number" id="vb" value="3000" style="width: 70px;" oninput="" onchange="if(value>60000)value=60000;if(value=='')value=3000;generateURL()" />
+				Kbps<br>
+				房间ID(字母) 
 				<input type="text" id="room" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'');generateURL()" onchange="if(this.value==''){randomRoomID();generateURL()}" />
-				<button type="button" class="btn" id="random" onclick="randomRoomID();generateURL()">重新生成</button>
-				<br>密码 (可不设):
-				<input type="text" id="password" onkeyup="generateURL()" />
+				<button type="button" class="btn" id="random" onclick="randomRoomID();generateURL()">随机生成</button>
+				<br>密码(可留空) 
+				<input type="text" id="password" style="width: 150px" onkeyup="generateURL()" />
 				<button type="button" class="btn" id="random2" onclick="randomPwd();generateURL()">生成</button>
 				<button type="button" class="btn" id="cleanPwd" onclick="document.getElementById('password').value='';generateURL()" style="background: #ed6a5e;">清除</button>
-				
 				<div style="display: none;">
 					串流链接:
 					<input type="text" id="server" style="width:300px" readonly="true">
@@ -76,12 +56,11 @@
 					分享链接:
 					<input type="text" id="client" style="width:300px" readonly="true">
 				</div>
-				
 			</div>
-			<HR>
-			<button type="button" class="btn" id="start" onclick="start();" style="width :350px; height: 40px; background: #61c554; font-size: 20px;">开始串流</button>
+			<hr>
+			<b><button type="button" class="btn" id="start" onclick="start();" style="width :350px; height: 40px; background: #61c554; font-size: 20px;">开始串流</button></b>
 		</div>
-		<div style="font-size: 10px;color: #bababa;">串流服务基于 <a style="font-size: 10px;color: #bababa;" href="https://vdo.ninja">VDO.Ninja</a></div>
+		<div class="thanks">串流服务基于 VDO.Ninja</div>
 	</div>
 	<input type="text" id="hiddenClient" style="position: absolute; top: -100px;" readonly="true">
 	<script type="text/javascript" src="settings.js"></script>
