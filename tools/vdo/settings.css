@@ -22,6 +22,14 @@
 	display: inline-block;
 }
 
+.btn:hover{
+	filter: brightness(0.8);
+}
+
+.btn:active{
+	filter: brightness(1);
+}
+
 .thanks {
 	font-size: 10px;
 	color: #bababa;
@@ -43,6 +51,12 @@
 	-webkit-animation-iteration-count:infinite;
 	-webkit-animation-direction:alternate;
 }
+
+.streaming:hover{
+	animation-play-state: paused;
+	filter: brightness(0.8);
+}
+
 
 @-webkit-keyframes breathe {
 	0% { background-color: #ec857c; }
@@ -82,6 +96,10 @@ input {
 	text-align: center;
 }
 
+input:hover{
+	filter: brightness(0.8);
+}
+
 select {
 	color: #505050;
 	outline-style: none;
@@ -90,6 +108,10 @@ select {
 	font-size: 14px;
 	font-weight: 700;
 	text-align: center;
+}
+
+select:hover{
+	filter: brightness(0.8);
 }
 
 a { 
