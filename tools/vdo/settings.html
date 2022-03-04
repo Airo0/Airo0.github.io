@@ -16,7 +16,7 @@
 		<div>
 		<hr>
 		<video autoplay="true" muted="true" id="player" style="border-radius: 4px;height: 196px;" controls></video>
-		<button type="button" class="btn" id="copy" style="width: 350px;height: 25px;font-weight:bold;display: none" onclick="document.getElementById('hiddenClient').select();document.execCommand('Copy');">观看链接已复制到剪贴板 (可点击此按钮再次复制)</button>
+		<button type="button" class="btn" id="copy" style="width: 350px;height: 25px;font-weight:bold;display: none" onclick="document.getElementById('hiddenClient').select();document.execCommand('Copy');alert('观看链接已经复制到您的剪贴板, 粘贴发送给观看者即可.');">观看链接已复制到剪贴板 (可点击此按钮再次复制)</button>
 		<div id="basic">
 			串流摄像头:
 			<select id="videoSource" onchange="generateURL()" style="width:200px"></select>
