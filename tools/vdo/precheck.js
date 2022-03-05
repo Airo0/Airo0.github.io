@@ -12,6 +12,32 @@ function getQueryString(name) {
 	if (r != null) return unescape(r[2]); return null;
 }
 
+function resize(){
+	var w = document.documentElement.clientWidth;
+	var h = document.documentElement.clientHeight;
+	/*if (w<464||h<464) {
+		if (h<464&&!isOBS){document.getElementById("main").style.margin="0em auto"}
+		document.getElementById("main").style.transform = 'scale('+Math.min(w,h)/464+')';
+	}else{
+		if (!isOBS){document.getElementById("main").style.margin="5em auto"}
+		document.getElementById("main").style.transform = '';
+	}*/
+	if (w<464) {
+		if (!isOBS){document.getElementById("main").style.margin="0em auto"}
+		document.getElementById("main").style.transform = 'scale('+w/464+')';
+	}else{
+		if (!isOBS){document.getElementById("main").style.margin="5em auto"}
+		document.getElementById("main").style.transform = '';
+	}
+}
+var resizeTimer;
+window.addEventListener('resize', function() {
+	clearTimeout(resizeTimer);
+	resizeTimer = setTimeout(function() {
+		resize();
+	}, 250);
+});
+
 var ua = navigator.userAgent
 var isFirefox = ua.indexOf('Firefox') > -1
 var isChrome = ua.indexOf('Chrome') > -1
@@ -29,21 +55,4 @@ if (isOBS) {
 	document.getElementById("main").innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
 }
 
-function resize(){
-	var w = document.documentElement.clientWidth;
-	var h = document.documentElement.clientHeight;
-	if (w<464||h<464) {
-		if (h<464&&!isOBS){document.getElementById("main").style.margin="0em auto"}
-		document.getElementById("main").style.transform = 'scale('+Math.min(w,h)/464+')';
-	}else{
-		if (!isOBS){document.getElementById("main").style.margin="5em auto"}
-		document.getElementById("main").style.transform = '';
-	}
-}
-var resizeTimer;
-window.addEventListener('resize', function() {
-	clearTimeout(resizeTimer);
-	resizeTimer = setTimeout(function() {
-		resize();
-	}, 250);
-});
+var simple = getQueryString("simple");
