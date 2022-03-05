@@ -1,0 +1,170 @@
+.settings {
+	transform-origin:0 0;
+	margin: 0em auto;
+	width: 400px;
+	padding: 2em;
+	text-align: center;
+	line-height: 30px;
+	background-color: #fdfdff;
+	color: #505050;
+}
+
+.btn {
+	border-width: 0px;
+	border-radius: 3px;
+	background-color: #2283e1;
+	cursor: pointer;
+	outline: none;
+	font-family: sans-serif;
+	color: white;
+	font-size: 13px;
+	display: inline-block;
+}
+
+.btn:active{
+	filter: brightness(1);
+}
+
+.thanks {
+	font-size: 10px;
+	color: #bababa;
+}
+
+.streaming {
+	border-width: 0px;
+	border-radius: 3px;
+	background: #ec857c;
+	cursor: pointer;
+	outline: none;
+	font-family: sans-serif;
+	color: white;
+	font-size: 13px;
+	font-weight: bold;
+	-webkit-animation-timing-function: ease-in-out;
+	-webkit-animation-name: breathe;
+	-webkit-animation-duration: 1500ms;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-direction: alternate;
+}
+
+@-webkit-keyframes breathe {
+	0% { background-color: #ec857c; }
+	100% { background-color: #c84031; }
+}
+
+@keyframes breathe {
+	0% { background-color: #ec857c; }
+	100% { background-color: #c84031; }
+}
+
+@-moz-keyframes breathe {
+	0% { background-color: #ec857c; }
+	100% { background-color: #c84031; }
+}
+
+@-o-keyframes breathe {
+	0% { background-color: #ec857c; }
+	100% { background-color: #c84031; }
+}
+
+body {
+	background-color: #fdfdff;
+	margin: 0;
+	padding: 0;
+	font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+input {
+	transition: all 0.10s ease-in-out;
+	-webkit-transition: all 0.10s ease-in-out;
+	-moz-transition: all 0.10s ease-in-out;
+	color: #505050;
+	outline: none;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	padding: 1px 0px;
+	font-size: 14px;
+	font-weight: 700;
+	text-align: center;
+}
+
+input:focus {
+	border: #35a5e5 1px solid;
+	box-shadow: 0 0 3px rgba(81, 203, 238, 1);
+	-webkit-box-shadow: 0 0 3px rgba(81, 203, 238, 1);
+	-moz-box-shadow: 0 0 3px rgba(81, 203, 238, 1);
+}
+
+select {
+	color: #505050;
+	outline-style: none;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	font-size: 14px;
+	text-align: center;
+}
+
+a { 
+	color: #38488f;
+	text-decoration:none;
+}
+
+hr {
+	background-color: #bababa;
+	height: 1px;
+	border: none;
+}
+
+#player {
+	background-color: #303134;
+}
+
+@media (hover: hover) {
+	.btn:hover{
+		filter: brightness(0.8);
+	}
+	
+	.streaming:hover{
+		animation-play-state: paused;
+		filter: brightness(0.8);
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	#player {
+		background-color: #1f1e1f;
+	}
+	
+	.settings {
+		background-color: #302f30;
+		color: #bdc1c6;
+	}
+	
+	body {
+		background-color: #302f30;
+	}
+	
+	input {
+		background-color: #303134;
+		border: 1px solid #5f6368;
+		color: #bdc1c6;
+	}
+	
+	select {
+		background-color: #535457;
+		border: 1px solid #535457;
+		color: #dcdcdd;
+	}
+	
+	hr {
+		background-color: #5f6368;
+	}
+	
+	a { 
+		color: #1E90FF;
+	}
+	
+	.thanks {
+		color: #535457;
+	}
+}
