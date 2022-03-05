@@ -1,12 +1,14 @@
 .settings {
 	transform-origin:0 0;
-	margin: 0em auto;
 	width: 400px;
+	margin: 5em auto;
 	padding: 2em;
 	text-align: center;
 	line-height: 30px;
 	background-color: #fdfdff;
 	color: #505050;
+	border-radius: 0.5em;
+	box-shadow: 0px 3px 7px 2px rgba(0,0,0,0.02);
 }
 
 .btn {
@@ -27,7 +29,7 @@
 
 .thanks {
 	font-size: 10px;
-	color: #bababa;
+	color: #dedede;
 }
 
 .streaming {
@@ -68,10 +70,15 @@
 }
 
 body {
-	background-color: #fdfdff;
+	background-color: #f0f0f2;
 	margin: 0;
 	padding: 0;
 	font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	overflow: -moz-scrollbars-none;
+}
+
+body:-webkit-scrollbar {
+	width: 0 !important
 }
 
 input {
@@ -136,12 +143,13 @@ hr {
 	}
 	
 	.settings {
+		box-shadow: 0px 3px 7px 2px rgba(0,0,0,0.06);
 		background-color: #302f30;
 		color: #bdc1c6;
 	}
 	
 	body {
-		background-color: #302f30;
+		background-color: #1f1e1f;
 	}
 	
 	input {
@@ -165,6 +173,6 @@ hr {
 	}
 	
 	.thanks {
-		color: #535457;
+		color: #454545;
 	}
 }

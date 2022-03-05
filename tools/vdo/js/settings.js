@@ -1,5 +1,50 @@
-let videoSourcesSelect = document.getElementById("videoSource");
-let videoPlayer = document.getElementById("player");
+function loadStyles(url) {
+    var link = document.createElement("link");
+    link.type = "text/css";
+    link.rel = "stylesheet";
+    link.href = url;
+    document.getElementsByTagName("head")[0].appendChild(link);
+}
+
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]); return '';
+}
+
+function resize(){
+    var w = document.documentElement.clientWidth;
+    var h = document.documentElement.clientHeight;
+    /*if (w<464||h<464) {
+        if (h<464&&!isOBS){document.getElementById("main").style.margin="0em auto"}
+        document.getElementById("main").style.transform = 'scale('+Math.min(w,h)/464+')';
+    }else{
+        if (!isOBS){document.getElementById("main").style.margin="5em auto"}
+        document.getElementById("main").style.transform = '';
+    }*/
+    if (w<464) {
+        if (!isOBS){document.getElementById("main").style.margin="0em auto"}
+        document.getElementById("main").style.transform = 'scale('+w/464+')';
+    }else{
+        if (!isOBS){document.getElementById("main").style.margin="5em auto"}
+        document.getElementById("main").style.transform = '';
+    }
+}
+
+function precheck() {
+    if (isOBS) {
+        loadStyles('./css/settings_obs.css');
+    }else if (isFirefox || isChrome || isEdge) {
+        loadStyles('./css/settings.css');
+    }else if (isSafari) {
+        loadStyles('./css/settings.css');
+        alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
+    } else {
+        loadStyles('./css/settings.css');
+        document.getElementById("main").innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
+    }
+}
+
 let MediaStreamHelper = {
     // Property of the object to store the current stream
     _stream: null,
@@ -41,16 +86,6 @@ let MediaStreamHelper = {
             });
         }
 	}
-};
-
-videoSourcesSelect.onchange = function () {
-    if (simple!="1"){
-        MediaStreamHelper.requestStream().then(function (stream) {
-            MediaStreamHelper._stream = stream;
-            videoPlayer.srcObject = stream;
-        });
-    }
-    generateURL();
 };
 
 function getDevice() {
@@ -246,13 +281,52 @@ function randomPwd() {
     pwd = null;
 }
 
+var ua = navigator.userAgent
+var isFirefox = ua.indexOf('Firefox') > -1
+var isChrome = ua.indexOf('Chrome') > -1
+var isEdge = ua.indexOf('Edg') > -1
+var isSafari = ua.indexOf('Safari') > -1
+var isOBS = ua.indexOf('OBS') > -1
+var simple = getQueryString("simple");
+var dark = getQueryString("dark");
+let videoSourcesSelect = document.getElementById("videoSource");
+let videoPlayer = document.getElementById("player");
+var resizeTimer;
+
+precheck();
+resize();
+randomRoomID();
+randomPwd();
+getDevice();
+
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+        resize();
+    }, 250);
+});
+
+if (dark=="1"){
+    if (isOBS){
+        loadStyles('./css/dark_obs.css')
+    }else {
+        loadStyles('./css/dark.css')
+    }
+}
+
 if (simple){
+    if (isOBS){document.body.style.overflow = "hidden";}
     videoPlayer.style.display = "none";
     document.getElementById('banner').style.display = "none";
     document.getElementById('thanks').style.display = "none";
 }
 
-resize();
-randomRoomID();
-randomPwd();
-getDevice();
+videoSourcesSelect.onchange = function () {
+    if (simple!="1"){
+        MediaStreamHelper.requestStream().then(function (stream) {
+            MediaStreamHelper._stream = stream;
+            videoPlayer.srcObject = stream;
+        });
+    }
+    generateURL();
+};

@@ -1,37 +1,36 @@
 #player {
 	background-color: #1f1e1f;
 }
-
+	
 .settings {
-	box-shadow: 0px 3px 7px 2px rgba(0,0,0,0.06);
 	background-color: #302f30;
 	color: #bdc1c6;
 }
-
+	
 body {
-	background-color: #1f1e1f;
+	background-color: #302f30;
 }
-
+	
 input {
 	background-color: #303134;
 	border: 1px solid #5f6368;
 	color: #bdc1c6;
 }
-
+	
 select {
 	background-color: #535457;
 	border: 1px solid #535457;
 	color: #dcdcdd;
 }
-
+	
 hr {
 	background-color: #5f6368;
 }
-
+	
 a { 
 	color: #1E90FF;
 }
-
+	
 .thanks {
-	color: #454545;
+	color: #535457;
 }
