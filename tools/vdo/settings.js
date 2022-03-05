@@ -114,6 +114,7 @@ function start() {
         iframe.src = url;
         iframe.id = "ninja";
         iframe.style = "width: 348px; height: 196px; border-radius: 4px;";
+        if (simple == "1"){iframe.style = "display: none";}
         iframe.allow = "camera;microphone";
         iframe.frameBorder="0";
         iframe.setAttribute("frameBorder", "0");
@@ -132,7 +133,7 @@ function start() {
 			videoPlayer.srcObject = stream;
 		});
 		generateURL();
-		videoPlayer.style.display = "";
+        if (simple != "1"){videoPlayer.style.display = "";}
         document.getElementById("basic").style = "display: block;";
     }
 }
@@ -241,6 +242,13 @@ function randomPwd() {
     pwd.value = random('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890');
     pwd = null;
 }
+
+if (simple){
+    videoPlayer.style.display = "none";
+    document.getElementById('banner').style.display = "none";
+    document.getElementById('thanks').style.display = "none";
+}
+
 resize();
 randomRoomID();
 randomPwd();
