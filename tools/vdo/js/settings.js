@@ -23,12 +23,32 @@ function resize(){
         document.getElementById("main").style.transform = '';
     }*/
     if (w<widthOfMain) {
-        if (!isOBS){main.style.margin="0em auto"}
         main.style.transform = 'scale('+w/widthOfMain+')';
     }else{
-        if (!isOBS){main.style.margin="5em auto"}
-        main.style.transform = '';
+        if (isMobile()){
+            //document.body.style.backgroundColor = document.defaultView.getComputedStyle(main, '').backgroundColor
+            main.style.boxShadow = 'none'
+            main.style.transformOrigin = '50% 0'
+            var scale = (w/(widthOfMain+30))
+            main.style.transform = 'scale('+scale+')'
+            main.style.margin = scale+"em auto"
+        }else{
+            if (!isOBS){main.style.margin="5em auto"}
+            main.style.transform = '';
+        }
     }
+}
+
+function isMobile() {
+    var mobileAgents = [ "Android", "iPhone", "SymbianOS", "Windows Phone", "iPad","iPod"];
+    var mobile_flag = false;
+    for (var v = 0; v < mobileAgents.length; v++) {
+        if (ua.indexOf(mobileAgents[v]) > 0) {
+            mobile_flag = true;
+            break;
+        }
+    }
+    return mobile_flag;
 }
 
 function precheck() {
@@ -279,6 +299,7 @@ function randomPwd() {
     pwd.value = random('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890');
     pwd = null;
 }
+
 
 var ua = navigator.userAgent
 var isFirefox = ua.indexOf('Firefox') > -1
