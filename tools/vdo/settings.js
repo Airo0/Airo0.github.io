@@ -44,10 +44,12 @@ let MediaStreamHelper = {
 };
 
 videoSourcesSelect.onchange = function () {
-    MediaStreamHelper.requestStream().then(function (stream) {
-        MediaStreamHelper._stream = stream;
-        videoPlayer.srcObject = stream;
-    });
+    if (simple!="1"){
+        MediaStreamHelper.requestStream().then(function (stream) {
+            MediaStreamHelper._stream = stream;
+            videoPlayer.srcObject = stream;
+        });
+    }
     generateURL();
 };
 
@@ -63,7 +65,7 @@ function getDevice() {
         videoSourcesSelect.selectedIndex = [...videoSourcesSelect.options].findIndex(option => option.text === stream.getVideoTracks()[0].label);
 
         // Play the current stream in the Video element
-        videoPlayer.srcObject = stream;
+        if (simple!="1"){videoPlayer.srcObject = stream;}
 
         // You can now list the devices using the Helper
         MediaStreamHelper.getDevices().then((devices) => {
@@ -127,13 +129,14 @@ function start() {
         btn.className = "btn";
         copyBtn.style.display = "none";
         document.getElementById("ninja").remove();
-		MediaStreamHelper.requestStream();
-		MediaStreamHelper.requestStream().then(function (stream) {
-			MediaStreamHelper._stream = stream;
-			videoPlayer.srcObject = stream;
-		});
-		generateURL();
-        if (simple != "1"){videoPlayer.style.display = "";}
+        generateURL();
+        if (simple != "1"){
+            MediaStreamHelper.requestStream().then(function (stream) {
+                MediaStreamHelper._stream = stream;
+                videoPlayer.srcObject = stream;
+            });
+            videoPlayer.style.display = "";
+        }
         document.getElementById("basic").style = "display: block;";
     }
 }
