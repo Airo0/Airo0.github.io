@@ -9,7 +9,7 @@ function loadStyles(url) {
 function getQueryString(name) {
 	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
 	var r = window.location.search.substr(1).match(reg);
-	if (r != null) return unescape(r[2]); return null;
+	if (r != null) return unescape(r[2]); return '';
 }
 
 function resize(){
@@ -52,7 +52,10 @@ if (isOBS) {
 	loadStyles('./settings.css');
 	alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
 } else {
+	loadStyles('./settings.css');
 	document.getElementById("main").innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
 }
 
 var simple = getQueryString("simple");
+var dark = getQueryString("dark");
+if (dark=="1"){loadStyles('./dark.css')}
