@@ -22,17 +22,18 @@ function resize(){
         if (!isOBS){document.getElementById("main").style.margin="5em auto"}
         document.getElementById("main").style.transform = '';
     }*/
-    if (w<464) {
-        if (!isOBS){document.getElementById("main").style.margin="0em auto"}
-        document.getElementById("main").style.transform = 'scale('+w/464+')';
+    if (w<widthOfMain) {
+        if (!isOBS){main.style.margin="0em auto"}
+        main.style.transform = 'scale('+w/widthOfMain+')';
     }else{
-        if (!isOBS){document.getElementById("main").style.margin="5em auto"}
-        document.getElementById("main").style.transform = '';
+        if (!isOBS){main.style.margin="5em auto"}
+        main.style.transform = '';
     }
 }
 
 function precheck() {
     if (isOBS) {
+        widthOfMain=400
         loadStyles('./css/settings_obs.css');
     }else if (isFirefox || isChrome || isEdge) {
         loadStyles('./css/settings.css');
@@ -41,7 +42,7 @@ function precheck() {
         alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
     } else {
         loadStyles('./css/settings.css');
-        document.getElementById("main").innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
+        main.innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
     }
 }
 
@@ -71,11 +72,8 @@ let MediaStreamHelper = {
         try {
             return navigator.mediaDevices.getUserMedia(constraints);
         }catch (e){
-            if (isOBS) {
-                document.getElementById("main").innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";
-            }else{
-                document.getElementById("main").innerHTML = "<b>获取媒体信息失败!<br>请确认浏览器是否支持 getUserMedia() 功能.<br>并确定本页面是从可信的HTTPS服务器所加载.";
-            }
+            main.innerHTML = "<b>获取媒体信息失败!<br>请确认浏览器是否支持 getUserMedia() 功能.<br>并确定本页面是从可信的HTTPS服务器所加载.";
+            if (isOBS) {main.innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";}
         }
     },
 	
@@ -128,10 +126,12 @@ function getDevice() {
         }).catch(function (e) {
             //console.log(e.name + ": " + e.message);
             alert("获取设备失败!");
+            if (isOBS) {document.getElementById("main").innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";}
         });
     }).catch(function (err) {
         //console.error(err);
-        document.getElementById("main").innerHTML = "<b>无法获取摄像头! 请确认您的设备已连接摄像头,<br>且已经授予本页面摄像头访问权, 之后刷新重试.";
+        main.innerHTML = "<b>无法获取摄像头! 请确认您的设备已连接摄像头,<br>且已经授予本页面摄像头访问权, 之后刷新重试.";
+        if (isOBS) {main.innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";}
     });
 }
 
@@ -289,8 +289,10 @@ var isSafari = ua.indexOf('Safari') > -1
 var isOBS = ua.indexOf('OBS') > -1
 var simple = getQueryString("simple");
 var dark = getQueryString("dark");
+var widthOfMain = 464;
 let videoSourcesSelect = document.getElementById("videoSource");
 let videoPlayer = document.getElementById("player");
+let main = document.getElementById("main");
 var resizeTimer;
 
 precheck();
