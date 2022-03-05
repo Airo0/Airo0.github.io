@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<title>VDO快速串流</title>
 	<link rel="icon" href="/favicon.ico">
-	<link rel="stylesheet" type="text/css" href="settings.css">
+	<script type="text/javascript" src="precheck.js"></script>
 </head>
 <body>
 	<div class="settings" id="main">
@@ -15,14 +15,21 @@
 		</div>
 		<div>
 		<hr>
-		<video autoplay="true" muted="true" id="player" style="border-radius: 4px;height: 196px;" controls></video>
+		<video autoplay="true" muted="true" id="player" style="border-radius: 4px;width: 348px;height: 196px;"
+		muted 
+		autoplay 
+		x5-video-player-fullscreen='true' 
+		x-webkit-airplay='true'  
+		x5-playsinline x-webkit-airplay='allow'
+		webkit-playsinline='true'  
+		playsinline='true'></video>
 		<button type="button" class="btn" id="copy" style="width: 350px;height: 25px;font-weight:bold;display: none" onclick="document.getElementById('hiddenClient').select();document.execCommand('Copy');alert('观看链接已经复制到您的剪贴板, 粘贴发送给观看者即可.');">观看链接已复制到剪贴板 (可点击此按钮再次复制)</button>
 		<div id="basic">
 			串流摄像头:
 			<select id="videoSource" onchange="generateURL()" style="width:200px"></select>
 			<input type="CheckBox" id="mirror" value="1" onchange="switchMirror();generateURL()" />镜像
 			<button type="button" class="btn" id="reget" style="width: 225px;height: 25px;font-weight:bold;" onclick="getDevice();checkVTS();">更新设备列表</button>
-			<button type="button" class="btn" id="advanced" style="width: 120px;height: 25px;background: #d8a748;font-weight:bold;" onclick="advSettings()">显示高级选项</button>
+			<button type="button" class="btn" id="advanced" style="width: 120px;height: 25px;background: #ecb54b;font-weight:bold;" onclick="advSettings()">显示高级选项</button>
 		</div>
 			<div id="advSettings" style="display: none;">
 				<hr>
@@ -47,7 +54,7 @@
 				<input type="text" id="room" onkeyup="this.value=this.value.replace(/[^a-zA-Z]/g,'');generateURL()" onchange="if(this.value==''){randomRoomID();generateURL()}" />
 				<button type="button" class="btn" id="random" onclick="randomRoomID();generateURL()">随机生成</button>
 				<br>密码(可留空) 
-				<input type="text" id="password" style="width: 150px" onkeyup="generateURL()" />
+				<input type="text" id="password" style="width: 148px" onkeyup="generateURL()" />
 				<button type="button" class="btn" id="random2" onclick="randomPwd();generateURL()">生成</button>
 				<button type="button" class="btn" id="cleanPwd" onclick="document.getElementById('password').value='';generateURL()" style="background: #ed6a5e;">清除</button>
 				<div style="display: none;">
