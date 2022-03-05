@@ -1,15 +1,3 @@
-var isFirefox = navigator.userAgent.indexOf('Firefox') > -1
-var isChrome = navigator.userAgent.indexOf('Chrome') > -1
-var isEdge = navigator.userAgent.indexOf('Edg') > -1
-var isSafari = navigator.userAgent.indexOf('Safari') > -1
-if (isFirefox || isChrome || isEdge || isSafari) {
-    if (!isChrome && isSafari) {
-        alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
-    }
-} else {
-    document.getElementById("main").innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
-}
-
 let videoSourcesSelect = document.getElementById("videoSource");
 let videoPlayer = document.getElementById("player");
 let MediaStreamHelper = {
@@ -26,7 +14,7 @@ let MediaStreamHelper = {
                 track.stop();
             });
         }
-
+        
         const videoSource = videoSourcesSelect.value;
         const constraints = {
             video: {
@@ -35,7 +23,15 @@ let MediaStreamHelper = {
                 } : undefined
             }
         };
-        return navigator.mediaDevices.getUserMedia(constraints);
+        try {
+            return navigator.mediaDevices.getUserMedia(constraints);
+        }catch (e){
+            if (isOBS) {
+                document.getElementById("main").innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";
+            }else{
+                document.getElementById("main").innerHTML = "<b>获取媒体信息失败!<br>请确认浏览器是否支持 getUserMedia() 功能.<br>并确定本页面是从可信的HTTPS服务器所加载.";
+            }
+        }
     },
 	
 	stopStream: function () {
@@ -93,10 +89,12 @@ function getDevice() {
             checkVTS();
             generateURL();
         }).catch(function (e) {
-            console.log(e.name + ": " + e.message);
+            //console.log(e.name + ": " + e.message);
+            alert("获取设备失败!");
         });
     }).catch(function (err) {
-        console.error(err);
+        //console.error(err);
+        document.getElementById("main").innerHTML = "<b>无法获取摄像头! 请确认您的设备已连接摄像头,<br>且已经授予本页面摄像头访问权, 之后刷新重试.";
     });
 }
 
@@ -243,7 +241,7 @@ function randomPwd() {
     pwd.value = random('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890');
     pwd = null;
 }
-
+resize();
 randomRoomID();
 randomPwd();
 getDevice();
