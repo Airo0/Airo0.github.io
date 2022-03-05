@@ -33,8 +33,7 @@ function resize(){
 
 function precheck() {
     if (isOBS) {
-        widthOfMain=400
-        loadStyles('./css/settings_obs.css');
+        widthOfMain = 432;
     }else if (isFirefox || isChrome || isEdge) {
         loadStyles('./css/settings.css');
     }else if (isSafari) {
