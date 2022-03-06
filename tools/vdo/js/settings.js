@@ -13,29 +13,36 @@ function getQueryString(name) {
 }
 
 function resize(){
-    var w = document.documentElement.clientWidth;
-    var h = document.documentElement.clientHeight;
-    /*if (w<464||h<464) {
-        if (h<464&&!isOBS){document.getElementById("main").style.margin="0em auto"}
-        document.getElementById("main").style.transform = 'scale('+Math.min(w,h)/464+')';
-    }else{
-        if (!isOBS){document.getElementById("main").style.margin="5em auto"}
-        document.getElementById("main").style.transform = '';
-    }*/
-    if (w<widthOfMain) {
-        main.style.transform = 'scale('+w/widthOfMain+')';
-    }else{
-        if (isMobile){
-            main.style.boxShadow = 'none'
-            main.style.transformOrigin = '50% 0'
-            var scale = (w/(widthOfMain+30))
-            main.style.transform = 'scale('+scale+')'
-            main.style.margin = scale+"em auto"
+    if (!isMobile){
+        var w = document.documentElement.clientWidth;
+        var h = document.documentElement.clientHeight;
+        var min = Math.min(w,h)
+        var mainW = main.offsetWidth;
+        var mainH = main.offsetHeight;
+        var margin = Math.max((h-mainH)/2,0)
+        if (simple) margin = -10
+        if ( w<mainW || h<mainH ) {
+            var scale = Math.min(w/mainW,h/mainH);
+            if (simple) scale = Math.min(w/mainW,1)
+            main.style.margin = margin+"px "+Math.max((w-mainW*scale)/2,0)+"px"
+            main.style.transform = 'scale('+scale+')';
         }else{
-            if (!isOBS){main.style.margin="5em auto"}
+            main.style.margin = margin+"px auto"
             main.style.transform = '';
         }
     }
+}
+
+function resizeMobile() {
+    var w = document.documentElement.clientWidth;
+    var h = document.documentElement.clientHeight;
+    var min = Math.min(w,h)
+    var mainW = main.offsetWidth;
+    var mainH = main.offsetHeight;
+    main.style.boxShadow = 'none'
+    var scale = Math.min(w/mainW,h/mainH);
+    main.style.margin = "0em "+Math.max((w-mainW*scale)/2,0)+"px"
+    main.style.transform = 'scale('+scale+')';
 }
 
 function isMobile() {
@@ -57,16 +64,32 @@ function isMobile() {
 
 function precheck() {
     if (isOBS) {
-        widthOfMain = 432;
+        
     }else if (isFirefox || isChrome || isEdge) {
         loadStyles('./css/settings.css');
-    }else if (isSafari) {
-        loadStyles('./css/settings.css');
-        if (!isMobile){document.getElementById("safariNote").innerHTML = "您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.<br>请考虑换用Chrome或Firefox内核的浏览器来进行串流!"}
-        //alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
+    } else if (isSafari) {
+        if (!isMobile) {
+            loadStyles('./css/settings.css');
+            document.getElementById("safariNote").innerHTML = "您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.<br>请考虑换用Chrome或Firefox内核的浏览器来进行串流!"
+        }
     } else {
         loadStyles('./css/settings.css');
         main.innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
+    }
+    if (isMobile) document.getElementById('codec')[1].selected = true;
+    if (dark=="1"){
+        if (isOBS){
+            loadStyles('./css/dark_obs.css')
+        }else {
+            loadStyles('./css/dark.css')
+        }
+    }
+
+    if (simple){
+        if (isOBS) document.body.style.overflow = "hidden";
+        videoPlayer.style.display = "none";
+        document.getElementById('banner').style.display = "none";
+        document.getElementById('thanks').style.display = "none";
     }
 }
 
@@ -97,7 +120,7 @@ let MediaStreamHelper = {
             return navigator.mediaDevices.getUserMedia(constraints);
         }catch (e){
             main.innerHTML = "<b>获取媒体信息失败!<br>请确认浏览器是否支持 getUserMedia() 功能.<br>并确定本页面是从可信的HTTPS服务器所加载.";
-            if (isOBS) {main.innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";}
+            if (isOBS) main.innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --use-fake-ui-for-media-stream";
         }
     },
 	
@@ -122,7 +145,7 @@ function getDevice() {
         videoSourcesSelect.selectedIndex = [...videoSourcesSelect.options].findIndex(option => option.text === stream.getVideoTracks()[0].label);
 
         // Play the current stream in the Video element
-        if (simple!="1"){videoPlayer.srcObject = stream;}
+        if (simple!="1") videoPlayer.srcObject = stream;
 
         // You can now list the devices using the Helper
         MediaStreamHelper.getDevices().then((devices) => {
@@ -150,12 +173,12 @@ function getDevice() {
         }).catch(function (e) {
             //console.log(e.name + ": " + e.message);
             alert("获取设备失败!");
-            if (isOBS) {document.getElementById("main").innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";}
+            if (isOBS) document.getElementById("main").innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";
         });
     }).catch(function (err) {
         //console.error(err);
         main.innerHTML = "<b>无法获取摄像头! 请确认您的设备已连接摄像头,<br>且已经授予本页面摄像头访问权, 之后刷新重试.";
-        if (isOBS) {main.innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";}
+        if (isOBS) main.innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";
     });
 }
 
@@ -175,7 +198,7 @@ function start() {
         iframe.src = url;
         iframe.id = "ninja";
         iframe.style = "width: 348px; height: 196px; border-radius: 4px;";
-        if (simple == "1"){iframe.style = "display: none";}
+        if (simple == "1") iframe.style = "display: none";
         iframe.allow = "camera;microphone";
         iframe.frameBorder="0";
         iframe.setAttribute("frameBorder", "0");
@@ -262,16 +285,16 @@ function advSettings() {
 
 function generateURL() {
     var password = document.getElementById("password").value;
-    if (password != "") { password = "&p=" + password; }
+    if (password != "") password = "&p=" + password;
     //var autoPause = getSelectCheck("autoPause", "&optimize=0", "")
     var camera = getSelectText("videoSource");
     var cameraLabel = "&vd=" + encodeURIComponent(camera);
     if (isMobile){
         var index = document.getElementById("videoSource").selectedIndex;
-        if (index == 1){cameraLabel = "&facing=back"}
+        if (index == 1) cameraLabel = "&facing=back";
     }
     var mirror = getSelectCheck("mirror", "&mirror", "");
-    if (camera == "VTubeStudioCam") { mirror = "&mirror"; }
+    if (camera == "VTubeStudioCam") mirror = "&mirror";
     var server = document.getElementById("server");
     var client = document.getElementById("client");
     var hiddenClient = document.getElementById("hiddenClient");
@@ -319,43 +342,17 @@ var isOBS = ua.indexOf('OBS') > -1
 var isMobile = isMobile();
 var simple = getQueryString("simple");
 var dark = getQueryString("dark");
-var widthOfMain = 464;
+let main = document.getElementById("main");
 let videoSourcesSelect = document.getElementById("videoSource");
 let videoPlayer = document.getElementById("player");
-let main = document.getElementById("main");
 var resizeTimer;
 
 precheck();
 resize();
+if (isMobile) resizeMobile();
 randomRoomID();
 randomPwd();
 getDevice();
-
-window.addEventListener('resize', function() {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function() {
-        resize();
-    }, 250);
-});
-
-if (dark=="1"){
-    if (isOBS){
-        loadStyles('./css/dark_obs.css')
-    }else {
-        loadStyles('./css/dark.css')
-    }
-}
-
-if (isMobile){
-    document.getElementById('codec')[1].selected = true;
-}
-
-if (simple){
-    if (isOBS){document.body.style.overflow = "hidden";}
-    videoPlayer.style.display = "none";
-    document.getElementById('banner').style.display = "none";
-    document.getElementById('thanks').style.display = "none";
-}
 
 videoSourcesSelect.onchange = function () {
     if (simple!="1"){
