@@ -160,7 +160,7 @@ hr {
 	
 	select {
 		background-color: #535457;
-		border: 1px solid #535457;
+		border: none;
 		color: #dcdcdd;
 	}
 	

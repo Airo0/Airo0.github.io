@@ -25,8 +25,7 @@ function resize(){
     if (w<widthOfMain) {
         main.style.transform = 'scale('+w/widthOfMain+')';
     }else{
-        if (isMobile()){
-            //document.body.style.backgroundColor = document.defaultView.getComputedStyle(main, '').backgroundColor
+        if (isMobile){
             main.style.boxShadow = 'none'
             main.style.transformOrigin = '50% 0'
             var scale = (w/(widthOfMain+30))
@@ -48,6 +47,11 @@ function isMobile() {
             break;
         }
     }
+    if (mobile_flag == false){
+        mobile_flag = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+        !window.MSStream
+    }
     return mobile_flag;
 }
 
@@ -58,7 +62,8 @@ function precheck() {
         loadStyles('./css/settings.css');
     }else if (isSafari) {
         loadStyles('./css/settings.css');
-        alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
+        if (!isMobile){document.getElementById("safariNote").innerHTML = "您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.<br>请考虑换用Chrome或Firefox内核的浏览器来进行串流!"}
+        //alert("您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.\n请考虑换用Chrome或Firefox内核的浏览器来进行串流!");
     } else {
         loadStyles('./css/settings.css');
         main.innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
@@ -259,10 +264,14 @@ function generateURL() {
     var password = document.getElementById("password").value;
     if (password != "") { password = "&p=" + password; }
     //var autoPause = getSelectCheck("autoPause", "&optimize=0", "")
-	var camera = getSelectText("videoSource");
+    var camera = getSelectText("videoSource");
     var cameraLabel = "&vd=" + encodeURIComponent(camera);
-	var mirror = getSelectCheck("mirror", "&mirror", "");
-	if (camera == "VTubeStudioCam") { mirror = "&mirror"; }
+    if (isMobile){
+        var index = document.getElementById("videoSource").selectedIndex;
+        if (index == 1){cameraLabel = "&facing=back"}
+    }
+    var mirror = getSelectCheck("mirror", "&mirror", "");
+    if (camera == "VTubeStudioCam") { mirror = "&mirror"; }
     var server = document.getElementById("server");
     var client = document.getElementById("client");
     var hiddenClient = document.getElementById("hiddenClient");
@@ -307,6 +316,7 @@ var isChrome = ua.indexOf('Chrome') > -1
 var isEdge = ua.indexOf('Edg') > -1
 var isSafari = ua.indexOf('Safari') > -1
 var isOBS = ua.indexOf('OBS') > -1
+var isMobile = isMobile();
 var simple = getQueryString("simple");
 var dark = getQueryString("dark");
 var widthOfMain = 464;
@@ -334,6 +344,10 @@ if (dark=="1"){
     }else {
         loadStyles('./css/dark.css')
     }
+}
+
+if (isMobile){
+    document.getElementById('codec')[1].selected = true;
 }
 
 if (simple){
