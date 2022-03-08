@@ -31,13 +31,15 @@
 			摄像头:
 			<select id="videoSource" onchange="generateURL()" style="width:230px"></select>&ensp;
 			<div id="lock" style="display: none;">
-			旋转<select id="lockRotation" onchange="generateURL();setRotation(this.value)">
+			旋转
+			<select id="lockRotation" onchange="generateURL()">
 				<option value="">不锁定</option>
 				<option value="&fl">横向</option>
 				<option value="&fp">竖向</option>
 			</select>
 			</div>
-			镜像<input type="CheckBox" id="mirror" value="1" onchange="switchMirror();generateURL()" />
+			镜像
+			<input type="CheckBox" id="mirror" value="1" onchange="switchMirror();generateURL()" />
 			<button type="button" class="btn" id="reget" style="width: 225px;height: 25px;font-weight:bold;" onclick="getDevice();checkVTS();">更新设备列表</button>
 			<button type="button" class="btn" id="advanced" style="width: 120px;height: 25px;background: #ecb54b;font-weight:bold;" onclick="advSettings()">显示高级选项</button>
 		</div>

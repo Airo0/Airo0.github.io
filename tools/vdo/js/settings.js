@@ -294,16 +294,6 @@ function generateURL() {
     hiddenClient.value = clientUrl;
 }
 
-function setRotation(rota) {
-    if (rota == "&fl") {
-        ninja.style.width = "348px";
-        ninja.style.height = "261px";
-    }else{
-        ninja.style.width = "261px";
-        ninja.style.height = "464px";
-    }
-}
-
 function random(char) {　　
     len = 12 || 32;　　
     var $chars = char;　　
