@@ -1,0 +1,21 @@
+#player {
+	width: 348px;
+	height: 261px;
+}
+
+#ninja {
+	width: 348px;
+	height: 261px;
+}
+
+@media screen and (orientation: portrait) {
+	#player {
+		width: 348px;
+		height: 464px;
+	}
+	
+	#ninja {
+		width: 261px;
+		height: 464px;
+	}
+} 

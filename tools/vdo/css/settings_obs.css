@@ -3,7 +3,7 @@
 	padding: 1em;
 	width: 400px;
 	text-align: center;
-	line-height: 30px;
+	line-height: 32px;
 	color: #505050;
 }
 
@@ -120,6 +120,16 @@ hr {
 
 #player {
 	background-color: #303134;
+	border-radius: 4px;
+	width: 348px;
+	height: 196px;
+}
+
+#ninja {
+	display: none;
+	width: 348px;
+	height: 196px;
+	border-radius: 4px;
 }
 
 @media (hover: hover) {

@@ -15,7 +15,10 @@
 		<hr>
 		</div>
 		<div>
-		<video autoplay="true" muted="true" id="player" style="border-radius: 4px;width: 348px;height: 196px;"
+		<div align="center">
+		<iframe id="ninja" src="" frameBorder="0" allow="camera;microphone"></iframe>
+		</div>
+		<video autoplay="true" muted="true" id="player" 
 		muted 
 		autoplay 
 		x5-video-player-fullscreen='true' 
@@ -25,9 +28,16 @@
 		playsinline='true'></video>
 		<button type="button" class="btn" id="copy" style="width: 350px;height: 25px;font-weight:bold;display: none" onclick="document.getElementById('hiddenClient').select();document.execCommand('Copy');alert('观看链接已经复制到您的剪贴板, 粘贴发送给观看者即可.');">观看链接已复制到剪贴板 (可点击此按钮再次复制)</button>
 		<div id="basic">
-			串流摄像头:
-			<select id="videoSource" onchange="generateURL()" style="width:200px"></select>
-			<input type="CheckBox" id="mirror" value="1" onchange="switchMirror();generateURL()" />镜像
+			摄像头:
+			<select id="videoSource" onchange="generateURL()" style="width:230px"></select>&ensp;
+			<div id="lock" style="display: none;">
+			旋转<select id="lockRotation" onchange="generateURL();setRotation(this.value)">
+				<option value="">不锁定</option>
+				<option value="&fl">横向</option>
+				<option value="&fp">竖向</option>
+			</select>
+			</div>
+			镜像<input type="CheckBox" id="mirror" value="1" onchange="switchMirror();generateURL()" />
 			<button type="button" class="btn" id="reget" style="width: 225px;height: 25px;font-weight:bold;" onclick="getDevice();checkVTS();">更新设备列表</button>
 			<button type="button" class="btn" id="advanced" style="width: 120px;height: 25px;background: #ecb54b;font-weight:bold;" onclick="advSettings()">显示高级选项</button>
 		</div>
@@ -35,17 +45,17 @@
 				<hr>
 					画质
 					<select id="quality" onchange="generateURL()">
-						<option value="0">高清</option>
-						<option value="1">普通</option>
-						<option value="2">流畅</option>
+						<option value="&q=0">高清</option>
+						<option value="&q=1">普通</option>
+						<option value="&q=2">流畅</option>
 					</select>
 					&ensp;编码
 					<select id="codec" onchange="generateURL()">
-						<option value="vp9">VP9</option>
-						<option value="h264">H264</option>
+						<option value="&codec=vp9">VP9</option>
+						<option value="&codec=h264">H264</option>
 						
-						<option value="vp8">VP8</option>
-						<option value="av1">AV1</option>
+						<option value="&codec=vp8">VP8</option>
+						<option value="&codec=av1">AV1</option>
 					</select>
 				&ensp;码率
 				<input type="number" id="vb" value="3000" style="width: 70px;" oninput="" onchange="if(value>60000)value=60000;if(value=='')value=3000;generateURL()" />

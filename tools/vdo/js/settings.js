@@ -63,28 +63,21 @@ function isMobile() {
 }
 
 function precheck() {
-    if (isOBS) {
-        
-    }else if (isFirefox || isChrome || isEdge) {
+    if (!isMobile && !isOBS) {
         loadStyles('./css/settings.css');
-    } else if (isSafari) {
-        if (!isMobile) {
-            loadStyles('./css/settings.css');
-            document.getElementById("safariNote").innerHTML = "您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.<br>请考虑换用Chrome或Firefox内核的浏览器来进行串流!"
-        }
-    } else {
-        loadStyles('./css/settings.css');
-        main.innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
+        if (!isFirefox && !isChrome && !isEdge && !isSafari) main.innerHTML = "<br>请使用Chrome或Firefox内核的浏览器访问此页面!";
+        if (isSafari && !isChrome) document.getElementById("safariNote").innerHTML = "您正在使用Safari浏览器, 可能无法获取虚拟摄像头/麦克风.<br>请考虑换用Chrome或Firefox内核的浏览器来进行串流!";
+    }else if (isMobile) {
+        loadStyles('./css/settings_mobile.css')
+        document.getElementById('codec')[1].selected = true;
+        document.getElementById('lock').style.display = 'inline';
+        videoSourcesSelect.style.width = '110px';
+        resizeMobile();
     }
-    if (isMobile) document.getElementById('codec')[1].selected = true;
     if (dark=="1"){
-        if (isOBS){
-            loadStyles('./css/dark_obs.css')
-        }else {
-            loadStyles('./css/dark.css')
-        }
+        loadStyles('./css/dark_obs.css');
+        if (!isOBS) loadStyles('./css/dark.css')
     }
-
     if (simple){
         if (isOBS) document.body.style.overflow = "hidden";
         videoPlayer.style.display = "none";
@@ -120,7 +113,7 @@ let MediaStreamHelper = {
             return navigator.mediaDevices.getUserMedia(constraints);
         }catch (e){
             main.innerHTML = "<b>获取媒体信息失败!<br>请确认浏览器是否支持 getUserMedia() 功能.<br>并确定本页面是从可信的HTTPS服务器所加载.";
-            if (isOBS) main.innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --use-fake-ui-for-media-stream";
+            if (isOBS) main.innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<div style='font-size: 14px'>--enable-media-stream --use-fake-ui-for-media-stream</div>";
         }
     },
 	
@@ -169,16 +162,15 @@ function getDevice() {
 
             });
             checkVTS();
-            generateURL();
         }).catch(function (e) {
             //console.log(e.name + ": " + e.message);
-            alert("获取设备失败!");
-            if (isOBS) document.getElementById("main").innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";
+            main.innerHTML = "<b>无法列出摄像头!<br>请确认您的设备已连接摄像头并授予权限.<br>且确定本页面是从可信的HTTPS服务器所加载.";
+            if (isOBS) document.getElementById("main").innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<div style='font-size: 14px'>--enable-media-stream --use-fake-ui-for-media-stream</div>";
         });
     }).catch(function (err) {
         //console.error(err);
         main.innerHTML = "<b>无法获取摄像头! 请确认您的设备已连接摄像头,<br>且已经授予本页面摄像头访问权, 之后刷新重试.";
-        if (isOBS) main.innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<br> --enable-media-stream --enable-media-stream";
+        if (isOBS) main.innerHTML = "<b>获取媒体信息失败!<br>请为 OBS 添加下列启动参数以允许媒体访问.<div style='font-size: 14px'>--enable-media-stream --use-fake-ui-for-media-stream</div>";
     });
 }
 
@@ -194,15 +186,8 @@ function start() {
         document.getElementById("basic").style = "display: none;";
         document.getElementById("advSettings").style = "display: none;";
         var url = document.getElementById("server").value;
-        var iframe = document.createElement('iframe'); 
-        iframe.src = url;
-        iframe.id = "ninja";
-        iframe.style = "width: 348px; height: 196px; border-radius: 4px;";
-        if (simple == "1") iframe.style = "display: none";
-        iframe.allow = "camera;microphone";
-        iframe.frameBorder="0";
-        iframe.setAttribute("frameBorder", "0");
-        videoPlayer.parentNode.insertBefore(iframe,videoPlayer);
+        ninja.src = url;
+        if (simple != "1") ninja.style.display = "inherit";
         document.getElementById('hiddenClient').select();
         document.execCommand('Copy');
         //alert("观看链接已经复制到您的剪贴板, 请发给对方即可.");
@@ -210,7 +195,7 @@ function start() {
         btn.innerHTML = "开始串流";
         btn.className = "btn";
         copyBtn.style.display = "none";
-        document.getElementById("ninja").remove();
+        ninja.remove();
         generateURL();
         if (simple != "1"){
             MediaStreamHelper.requestStream().then(function (stream) {
@@ -246,19 +231,18 @@ function getSelectCheck(id, v1, v2) {
 
 function checkVTS() {
     var videoSource = document.getElementById("videoSource");
-    var camIndex;
+    videoSource[videoSource.length-1].selected = true;
     for (i = 0; i < videoSource.length; i++) {
         if (videoSource[i].text == "VTubeStudioCam" || videoSource[i].text == "NDI Video") {
-            camIndex = i;
             videoSource[i].selected = true;
-            MediaStreamHelper.requestStream().then(function (stream) {
-                MediaStreamHelper._stream = stream;
-                videoPlayer.srcObject = stream;
-            });
-            generateURL();
             break;
         }
     }
+    generateURL();
+    MediaStreamHelper.requestStream().then(function (stream) {
+        MediaStreamHelper._stream = stream;
+        videoPlayer.srcObject = stream;
+    });
 }
 
 function switchMirror() {
@@ -300,13 +284,24 @@ function generateURL() {
     var hiddenClient = document.getElementById("hiddenClient");
     var vb = "&vb=" + document.getElementById("vb").value;
     var roomID = document.getElementById("room").value;
-    var quality = "&q=" + getSelectValue("quality");
-    var codec = "&codec=" + getSelectValue("codec");
-    var serverUrl = "https://vdo.ninja/?ln=cn&as&wc&fullscreen&cleanish&ad=0&push=" + roomID + cameraLabel + quality + mirror + password
+    var quality = getSelectValue("quality");
+    var codec = getSelectValue("codec");
+    var rotation = getSelectValue("lockRotation");
+    var serverUrl = "https://vdo.ninja/?ln=cn&as&wc&fullscreen&cleanish&ad=0&push=" + roomID + cameraLabel + quality + mirror + rotation + password
     var clientUrl = "https://vdo.ninja/?cv&view=" + roomID + codec + vb + password
     server.value = serverUrl;
     client.value = clientUrl;
     hiddenClient.value = clientUrl;
+}
+
+function setRotation(rota) {
+    if (rota == "&fl") {
+        ninja.style.width = "348px";
+        ninja.style.height = "261px";
+    }else{
+        ninja.style.width = "261px";
+        ninja.style.height = "464px";
+    }
 }
 
 function random(char) {　　
@@ -345,11 +340,11 @@ var dark = getQueryString("dark");
 let main = document.getElementById("main");
 let videoSourcesSelect = document.getElementById("videoSource");
 let videoPlayer = document.getElementById("player");
+var ninja = document.getElementById('ninja'); 
 var resizeTimer;
 
 precheck();
 resize();
-if (isMobile) resizeMobile();
 randomRoomID();
 randomPwd();
 getDevice();
@@ -363,3 +358,6 @@ videoSourcesSelect.onchange = function () {
     }
     generateURL();
 };
+window.addEventListener('orientationchange', function() {
+    setTimeout(function () {resizeMobile()},200);
+});
