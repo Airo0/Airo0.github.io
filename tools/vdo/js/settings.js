@@ -195,7 +195,8 @@ function start() {
         btn.innerHTML = "开始串流";
         btn.className = "btn";
         copyBtn.style.display = "none";
-        ninja.remove();
+        ninja.style.display = "none";
+        ninja.src = "about:blank";
         generateURL();
         if (simple != "1"){
             MediaStreamHelper.requestStream().then(function (stream) {
