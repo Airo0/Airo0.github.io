@@ -329,7 +329,7 @@
         function createInput(container, buttonsContainer, chapter) {
             const textarea = document.createElement('textarea');
             textarea.rows = 4;
-            textarea.style.width = (window.innerWidth - 60) + 'px';
+            textarea.style.width = Math.min(800, (window.innerWidth - 60)) + 'px';
             container.appendChild(textarea);
 
             const submitButton = document.createElement('button');
