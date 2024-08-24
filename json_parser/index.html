@@ -116,6 +116,7 @@
 
     <script>
         let jsonData = null;
+        let chapters = null;
         let currentQuestionIndex = 0;
         let historyStack = [];
 
@@ -127,11 +128,17 @@
                     try {
                         jsonData = JSON.parse(e.target.result);
                         if (!jsonData.name) {
-                            alert("JSON 文件格式错误!");
-                            location.reload();
-                            return;
+                            if (jsonData[0].id) {
+                                chapters = jsonData
+                                startQuestionnaire()
+                            } else {
+                                alert("JSON 文件格式错误!");
+                                location.reload();
+                                return;
+                            }
+                        } else {
+                            displayMetadata(jsonData);
                         }
-                        displayMetadata(jsonData);
                         document.getElementById('fileInputWrapper').style.display = "none";
                     } catch (error) {
                         alert("JSON 文件格式错误!");
@@ -181,7 +188,9 @@
                 imgContainer.appendChild(imgElement);
                 output.appendChild(imgContainer);
             }
-
+            
+            chapters = jsonData.chapters
+            
             const startButton = document.getElementById('startButton');
             startButton.style.display = 'block';
             startButton.addEventListener('click', startQuestionnaire);
@@ -192,9 +201,8 @@
             const questionnaire = document.getElementById('questionnaire');
             questionnaire.style.display = 'block';
             //document.getElementById('navigationButtons').style.display = 'block';
-
-            if (jsonData && jsonData.chapters && jsonData.chapters.length > 0) {
-                loadQuestion(jsonData.chapters[currentQuestionIndex]);
+            if (jsonData && chapters && chapters.length > 0) {
+                loadQuestion(chapters[currentQuestionIndex]);
             }
         }
 
@@ -220,7 +228,7 @@
             previousButton.addEventListener('click', function() {
                 if (historyStack.length > 0) {
                     currentQuestionIndex = historyStack.pop();
-                    loadQuestion(jsonData.chapters[currentQuestionIndex]);
+                    loadQuestion(chapters[currentQuestionIndex]);
                 } else {
                     alert("无法返回上一个");
                 }
@@ -234,11 +242,9 @@
                 
                 requestAnimationFrame(() => {
                     const divHeight = document.getElementById('questionnaire').offsetHeight;
-                    console.log('Height after repaint:', divHeight);
-                    
                     const availableHeight = window.innerHeight - divHeight - 80;
                     const autoHeight = window.innerWidth / imgElement.width * imgElement.height;
-                    console.log(availableHeight, autoHeight);
+
                     if (!isNaN(autoHeight)) {
                         imgElement.style.height = Math.min(autoHeight, availableHeight) + 'px';
                     } else {
@@ -256,7 +262,7 @@
             answersParentContainer.appendChild(answersContainer);
             answersParentContainer.appendChild(document.createElement('hr'));
             answersParentContainer.appendChild(buttonsContainer);
-
+            
             switch (chapter.type) {
                 case 'picker':
                     createPicker(answersContainer, buttonsContainer, chapter);
@@ -331,7 +337,7 @@
 
         function createInput(container, buttonsContainer, chapter) {
             const textarea = document.createElement('textarea');
-            textarea.rows = 4;
+            textarea.rows = 3;
             textarea.style.width = Math.min(800, (window.innerWidth - 60)) + 'px';
             container.appendChild(textarea);
 
@@ -374,12 +380,12 @@
         }
 
         function navigateToQuestion(questionID) {
-            const nextQuestionIndex = jsonData.chapters.findIndex(chapter => chapter.id === questionID);
+            const nextQuestionIndex = chapters.findIndex(chapter => chapter.id === questionID);
 
             if (nextQuestionIndex !== -1) {
                 historyStack.push(currentQuestionIndex);
                 currentQuestionIndex = nextQuestionIndex;
-                loadQuestion(jsonData.chapters[currentQuestionIndex]);
+                loadQuestion(chapters[currentQuestionIndex]);
             } else {
                 alert("已结束");
                 location.reload();
