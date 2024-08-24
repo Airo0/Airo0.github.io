@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>JSON 解析器</title>
+        <style>
+            button {
+                background-color: #4DA3F1;
+                border-radius: 6px;
+                border: none;
+                color: white;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+            }
+            body {
+                font-family: Arial, sans-serif;
+                padding: 20px;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            .container {
+                max-width: 800px;
+                width: 100%;
+            }
+            img {
+                max-width: 100%;
+                object-fit: contain;
+                display: block;
+                margin: 10px auto;
+            }
+            .info {
+                margin-top: 10px;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 16px;
+                cursor: pointer;
+                margin: 10px 5px;
+            }
+            .question-container {
+                margin-top: 0px;
+                width: 100%;
+                text-align: left;
+            }
+            .answers {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                flex-direction: column;
+                display: inline-block;
+                text-align: left;
+            }
+            .answers label {
+                margin: 0 10px;
+            }
+            .center {
+                text-align: center;
+            }
+            .buttons {
+                margin-top: 20px;
+                display: flex;
+                justify-content: space-between; /* Ensure buttons are spaced evenly */
+            }
+            .buttons button {
+                flex: 1; /* Each button takes equal space */
+                margin: 0 10px; /* Optional: Add some space between the buttons */
+            }
+            /* Style for centering the image within its container */
+            .img-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .file-input-wrapper {
+                position: relative;
+                display: inline-block;
+                overflow: hidden;
+                cursor: pointer;
+            }
+            .file-input {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                opacity: 0;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div id="fileInputWrapper" class="center">
+                <div style="padding-top: 50%;"></div>
+                <div class="file-input-wrapper center">
+                    <button>导入 JSON 文件</button>
+                    <input type="file" class="file-input" id="fileInput" accept=".json">
+                </div>
+            </div>
+            <div id="metadata">
+                <div id="output" class="center"></div>
+                <div id=startButtonDiv style="display: flex;">
+                    <button id="startButton" style="display:none; flex: 1;">开始</button>
+                </div>
+            </div>
+            <div id="questionnaire" class="question-container" style="display:none;"></div>
+        </div>
+
+    <script>
+        let jsonData = null;
+        let currentQuestionIndex = 0;
+        let historyStack = [];
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        jsonData = JSON.parse(e.target.result);
+                        if (!jsonData.name) {
+                            alert("JSON 文件格式错误!");
+                            location.reload();
+                            return;
+                        }
+                        displayMetadata(jsonData);
+                        document.getElementById('fileInputWrapper').style.display = "none";
+                    } catch (error) {
+                        alert("JSON 文件格式错误!");
+                        location.reload();
+                        return;
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function displayMetadata(data) {
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+
+            if (data.name) {
+                const nameElement = document.createElement('p');
+                nameElement.textContent = `《${data.name}》`;
+                output.appendChild(nameElement);
+            }
+
+            if (data.author) {
+                const authorElement = document.createElement('p');
+                authorElement.textContent = `作者: ${data.author}`;
+                output.appendChild(authorElement);
+            }
+
+            if (data.version) {
+                const versionElement = document.createElement('p');
+                versionElement.textContent = `版本: ${data.version}`;
+                output.appendChild(versionElement);
+            }
+
+            if (data.link) {
+                const linkElement = document.createElement('p');
+                linkElement.innerHTML = `关联链接: <a href="${data.link}" target="_blank">点击前往</a>`;
+                output.appendChild(linkElement);
+            }
+
+            if (data.cover) {
+                const imgElement = document.createElement('img');
+                imgElement.src = `data:image/png;base64,${data.cover}`;
+                imgElement.style.maxHeight = "50vh";
+                // Create a container for the image
+                const imgContainer = document.createElement('div');
+                imgContainer.classList.add('img-container');
+                imgContainer.appendChild(imgElement);
+                output.appendChild(imgContainer);
+            }
+
+            const startButton = document.getElementById('startButton');
+            startButton.style.display = 'block';
+            startButton.addEventListener('click', startQuestionnaire);
+        }
+
+        function startQuestionnaire() {
+            document.getElementById('metadata').style.display = 'none';
+            const questionnaire = document.getElementById('questionnaire');
+            questionnaire.style.display = 'block';
+            //document.getElementById('navigationButtons').style.display = 'block';
+
+            if (jsonData && jsonData.chapters && jsonData.chapters.length > 0) {
+                loadQuestion(jsonData.chapters[currentQuestionIndex]);
+            }
+        }
+
+        function loadQuestion(chapter) {
+            const questionnaire = document.getElementById('questionnaire');
+            questionnaire.innerHTML = '';
+
+            if (chapter.question) {
+                const questionElement = document.createElement('p');
+                questionElement.innerHTML = chapter.question.replace(/\n/g, '<br>');;
+                questionnaire.appendChild(questionElement);
+            }
+            
+            const answersParentContainer = document.createElement('div');
+            answersParentContainer.classList.add('center');
+            
+            const answersContainer = document.createElement('div');
+            answersContainer.classList.add('answers');
+            
+            const buttonsContainer = document.createElement('div');
+            const previousButton = document.createElement('button');
+            previousButton.textContent = '上一个';
+            previousButton.addEventListener('click', function() {
+                if (historyStack.length > 0) {
+                    currentQuestionIndex = historyStack.pop();
+                    loadQuestion(jsonData.chapters[currentQuestionIndex]);
+                } else {
+                    alert("无法返回上一个");
+                }
+            });
+            buttonsContainer.classList.add('buttons')
+            buttonsContainer.appendChild(previousButton);
+            
+            if (chapter.image) {
+                const imgElement = document.createElement('img');
+                imgElement.src = `data:image/png;base64,${chapter.image}`;
+                
+                requestAnimationFrame(() => {
+                    const divHeight = document.getElementById('questionnaire').offsetHeight;
+                    console.log('Height after repaint:', divHeight);
+                    
+                    const availableHeight = window.innerHeight - divHeight - 80;
+                    const autoHeight = window.innerWidth / imgElement.width * imgElement.height;
+                    console.log(availableHeight, autoHeight);
+                    if (!isNaN(autoHeight)) {
+                        imgElement.style.height = Math.min(autoHeight, availableHeight) + 'px';
+                    } else {
+                        imgElement.style.height = availableHeight + 'px';
+                    }
+                    // Create a container for the image
+                    const imgContainer = document.createElement('div');
+                    imgContainer.classList.add('img-container');
+                    imgContainer.appendChild(imgElement);
+                    questionnaire.insertBefore(imgContainer, questionnaire.firstChild);
+                });
+            }
+            
+            answersParentContainer.appendChild(document.createElement('hr'));
+            answersParentContainer.appendChild(answersContainer);
+            answersParentContainer.appendChild(document.createElement('hr'));
+            answersParentContainer.appendChild(buttonsContainer);
+
+            switch (chapter.type) {
+                case 'picker':
+                    createPicker(answersContainer, buttonsContainer, chapter);
+                    break;
+                case 'multi-picker':
+                    createMultiPicker(answersContainer, buttonsContainer, chapter);
+                    break;
+                case 'input':
+                    createInput(answersContainer, buttonsContainer, chapter);
+                    break;
+                case 'step':
+                    createStepper(answersContainer, buttonsContainer, chapter);
+                    break;
+                default:
+                    answersContainer.textContent = 'Unknown question type.';
+            }
+
+            questionnaire.appendChild(answersParentContainer);
+        }
+
+        function createPicker(container, buttonsContainer, chapter) {
+            for (let key in chapter.answers) {
+                const radioLabel = document.createElement('label');
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'picker';
+                radio.value = key;
+
+                radioLabel.appendChild(radio);
+                radioLabel.appendChild(document.createTextNode(key));
+                container.appendChild(radioLabel);
+                container.appendChild(document.createElement('br'));
+            }
+
+            const submitButton = document.createElement('button');
+            submitButton.textContent = '下一个';
+            submitButton.addEventListener('click', function() {
+                const selectedOption = container.querySelector('input[name="picker"]:checked');
+                if (selectedOption) {
+                    navigateToQuestion(chapter.answers[selectedOption.value]);
+                }
+            });
+            
+            buttonsContainer.appendChild(submitButton);
+        }
+
+        function createMultiPicker(container, buttonsContainer, chapter) {
+            for (let key in chapter.answers) {
+                const checkboxLabel = document.createElement('label');
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.value = key;
+
+                checkboxLabel.appendChild(checkbox);
+                checkboxLabel.appendChild(document.createTextNode(key));
+                container.appendChild(checkboxLabel);
+                container.appendChild(document.createElement('br'));
+            }
+
+            const submitButton = document.createElement('button');
+            submitButton.textContent = '下一个';
+            submitButton.addEventListener('click', function() {
+                const selectedOptions = Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map(input => input.value);
+                if (selectedOptions.length > 0) {
+                    const nextQuestionID = chapter.answers[selectedOptions[0]]; // Use the first selected option for navigation
+                    navigateToQuestion(nextQuestionID);
+                }
+            });
+
+            buttonsContainer.appendChild(submitButton);
+        }
+
+        function createInput(container, buttonsContainer, chapter) {
+            const textarea = document.createElement('textarea');
+            textarea.rows = 4;
+            textarea.style.width = (window.innerWidth - 60) + 'px';
+            container.appendChild(textarea);
+
+            const submitButton = document.createElement('button');
+            submitButton.textContent = '下一个';
+            submitButton.addEventListener('click', function() {
+                const nextQuestionID = Object.values(chapter.answers)[0]; // Use the first option's ID for navigation
+                if (nextQuestionID) {
+                    navigateToQuestion(nextQuestionID);
+                }
+            });
+
+            buttonsContainer.appendChild(submitButton);
+        }
+
+        function createStepper(container, buttonsContainer, chapter) {
+            const buttonList = document.createElement('div');
+            for (let key in chapter.answers) {
+                const radioLabel = document.createElement('label');
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'step';
+                radio.value = key;
+
+                radioLabel.appendChild(radio);
+                radioLabel.appendChild(document.createTextNode(key));
+                buttonList.appendChild(radioLabel);
+            }
+            container.appendChild(buttonList);
+            const submitButton = document.createElement('button');
+            submitButton.textContent = '下一个';
+            submitButton.addEventListener('click', function() {
+                const selectedOption = container.querySelector('input[name="step"]:checked');
+                if (selectedOption) {
+                    navigateToQuestion(chapter.answers[selectedOption.value]);
+                }
+            });
+
+            buttonsContainer.appendChild(submitButton);
+        }
+
+        function navigateToQuestion(questionID) {
+            const nextQuestionIndex = jsonData.chapters.findIndex(chapter => chapter.id === questionID);
+
+            if (nextQuestionIndex !== -1) {
+                historyStack.push(currentQuestionIndex);
+                currentQuestionIndex = nextQuestionIndex;
+                loadQuestion(jsonData.chapters[currentQuestionIndex]);
+            } else {
+                alert("已结束");
+                location.reload();
+                return;
+            }
+        }
+    </script>
+</body>
+</html>
