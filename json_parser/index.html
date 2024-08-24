@@ -49,6 +49,9 @@
             .info {
                 margin-top: 10px;
             }
+            input {
+                margin: 6px 0;
+            }
             button {
                 padding: 10px 20px;
                 font-size: 16px;
@@ -81,7 +84,7 @@
             }
             .buttons button {
                 flex: 1; /* Each button takes equal space */
-                margin: 0 10px; /* Optional: Add some space between the buttons */
+                margin: 0 5px; /* Optional: Add some space between the buttons */
             }
             /* Style for centering the image within its container */
             .img-container {
@@ -117,8 +120,9 @@
             </div>
             <div id="metadata">
                 <div id="output" class="center"></div>
-                <div id=startButtonDiv style="display: flex;">
-                    <button id="startButton" style="display:none; flex: 1;">开始</button>
+                <div id="startButtonDiv" style="display:none;">
+                    <button id="exitButton" style="flex: 1; background-color: #ED695E;" onclick="location.reload();">重选</button>
+                    <button id="startButton" style="flex: 1;">开始</button>
                 </div>
             </div>
             <div id="questionnaire" class="question-container" style="display:none;"></div>
@@ -191,18 +195,24 @@
             if (data.cover) {
                 const imgElement = document.createElement('img');
                 imgElement.src = `data:image/png;base64,${data.cover}`;
-                imgElement.style.maxHeight = "50vh";
-                // Create a container for the image
-                const imgContainer = document.createElement('div');
-                imgContainer.classList.add('img-container');
-                imgContainer.appendChild(imgElement);
-                output.appendChild(imgContainer);
+                
+                requestAnimationFrame(() => {
+                    const divHeight = document.getElementById('metadata').offsetHeight;
+                    const availableHeight = window.innerHeight - divHeight - 70;
+                    imgElement.style.height = availableHeight + 'px';
+                    // Create a container for the image
+                    const imgContainer = document.createElement('div');
+                    imgContainer.classList.add('img-container');
+                    imgContainer.appendChild(imgElement);
+                    output.insertBefore(imgContainer, questionnaire.firstChild);
+                });
             }
             
             chapters = jsonData.chapters
             
-            const startButton = document.getElementById('startButton');
-            startButton.style.display = 'block';
+            const startButton = document.getElementById('startButtonDiv');
+            startButton.style.display = 'flex';
+            startButton.style.paddingBottom = '20px';
             startButton.addEventListener('click', startQuestionnaire);
         }
 
@@ -243,8 +253,16 @@
                     alert("无法返回上一个");
                 }
             });
-            buttonsContainer.classList.add('buttons')
+            const exitButton = document.createElement('button');
+            exitButton.textContent = '退出';
+            exitButton.style.backgroundColor = '#ED695E';
+            exitButton.addEventListener('click', function() {
+                location.reload();
+            });
+            buttonsContainer.classList.add('buttons');
+            buttonsContainer.style.paddingBottom = "20px";
             buttonsContainer.appendChild(previousButton);
+            buttonsContainer.appendChild(exitButton);
             
             if (chapter.image) {
                 const imgElement = document.createElement('img');
@@ -253,13 +271,7 @@
                 requestAnimationFrame(() => {
                     const divHeight = document.getElementById('questionnaire').offsetHeight;
                     const availableHeight = window.innerHeight - divHeight - 80;
-                    const autoHeight = window.innerWidth / imgElement.width * imgElement.height;
-
-                    if (!isNaN(autoHeight)) {
-                        imgElement.style.height = Math.min(autoHeight, availableHeight) + 'px';
-                    } else {
-                        imgElement.style.height = availableHeight + 'px';
-                    }
+                    imgElement.style.height = availableHeight + 'px';
                     // Create a container for the image
                     const imgContainer = document.createElement('div');
                     imgContainer.classList.add('img-container');
